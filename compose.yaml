@@ -1,0 +1,26 @@
+services:
+  translator:
+    build:
+      context: .
+      dockerfile: Containerfile
+    image: speranza-translator:latest
+    container_name: speranza-translator
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_PATH=/app/data/bundles.db
+      - ARGOS_PACKAGES_DIR=/home/appuser/.local/share/argos-translate/packages
+    volumes:
+      - translator_db:/app/data
+      - translator_models:/home/appuser/.local/share/argos-translate
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      start_period: 15s
+      retries: 3
+
+volumes:
+  translator_db:
+  translator_models:
