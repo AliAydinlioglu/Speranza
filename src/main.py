@@ -51,9 +51,10 @@ async def value_error_handler(request: Request, exc: ValueError):
 
 @app.exception_handler(KeyError)
 async def key_error_handler(request: Request, exc: KeyError):
+    key_name = str(exc).strip("'\"")
     return JSONResponse(
         status_code=status.HTTP_404_NOT_FOUND,
-        content={"detail": f"Resource not found: {str(exc).strip('\'')}"},
+        content={"detail": f"Resource not found: {key_name}"},
     )
 
 
