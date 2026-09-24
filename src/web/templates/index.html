@@ -3,9 +3,324 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ARC Raiders Translator</title>
+    <title>ARC // COMM-TRANS 800 — Neural Intercept Unit</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/app.css">
+    <link rel="stylesheet" href="/static/css/crt.css">
 </head>
-<body>
-    <div id="app"></div>
+<body class="bg-[#0E0F12] text-[#EDE8D0] min-h-screen p-2 md:p-6 flex flex-col justify-between relative overflow-x-hidden">
+    <div class="max-w-7xl mx-auto w-full relative">
+        <svg class="foliage-decal -top-3 -left-3 w-16 h-16 pointer-events-none" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 0C6 12 14 18 28 14C36 12 40 4 36 0H0Z" fill="#15803D"/>
+            <path d="M4 0C8 8 16 12 24 8C30 5 32 0 28 0H4Z" fill="#22C55E"/>
+            <path d="M0 4C4 16 12 24 20 22C16 18 10 12 6 2L0 4Z" fill="#15803D"/>
+            <path d="M12 20C18 30 26 34 32 32C28 28 22 24 16 18L12 20Z" fill="#22C55E"/>
+            <circle cx="8" cy="14" r="3" fill="#86EFAC"/>
+            <circle cx="18" cy="22" r="2.5" fill="#86EFAC"/>
+            <circle cx="28" cy="12" r="2" fill="#86EFAC"/>
+            <path d="M2 18C10 26 12 36 10 44C8 38 7 30 0 22L2 18Z" fill="#15803D"/>
+        </svg>
+
+        <svg class="foliage-decal -top-3 -right-3 w-16 h-16 pointer-events-none transform scale-x-[-1]" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 0C6 12 14 18 28 14C36 12 40 4 36 0H0Z" fill="#15803D"/>
+            <path d="M4 0C8 8 16 12 24 8C30 5 32 0 28 0H4Z" fill="#22C55E"/>
+            <path d="M0 4C4 16 12 24 20 22C16 18 10 12 6 2L0 4Z" fill="#15803D"/>
+            <circle cx="14" cy="16" r="3" fill="#86EFAC"/>
+            <circle cx="24" cy="10" r="2" fill="#86EFAC"/>
+        </svg>
+
+        <header class="bg-[#1A1C23] border-2 border-[#2D313D] rounded-t-lg p-3 md:p-4 relative shadow-2xl">
+            <div class="arc-spectrum-bar rounded-t-sm mb-3">
+                <span></span><span></span><span></span><span></span><span></span>
+            </div>
+
+            <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-3">
+                    <span class="chassis-screw"></span>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-mono-code font-bold tracking-widest text-[#FF4D00] bg-[#FF4D00]/10 px-2 py-0.5 border border-[#FF4D00]/30 rounded">ARC // RECON-SURPLUS</span>
+                            <span class="text-[10px] font-mono-code telemetry-orange">[REV-4.2]</span>
+                            <span class="text-[10px] font-mono-code telemetry-cyan">[REC-09]</span>
+                        </div>
+                        <h1 class="text-xl md:text-2xl font-bold tracking-wider text-[#EDE8D0] mt-0.5">COMM-TRANS 800</h1>
+                        <p class="text-[11px] font-mono-code tracking-widest text-zinc-400">SURFACE INTERCEPT &amp; NEURAL TRANSLATION UNIT</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <div class="hidden sm:flex flex-col items-end text-[10px] font-mono-code">
+                        <span class="telemetry-yellow font-bold">ERR RATE: &lt;0.002%</span>
+                        <span class="telemetry-cyan font-bold">CLOCK: 24.180 MHZ</span>
+                    </div>
+                    <div class="flex items-center gap-2 bg-[#14171B] border border-[#2D313D] px-3 py-1.5 rounded">
+                        <span class="led-indicator led-green led-green-pulse"></span>
+                        <span class="text-xs font-mono-code font-bold text-[#4ADE80] tracking-wider">CARRIER LOCK: SOLID</span>
+                    </div>
+                    <span class="chassis-screw"></span>
+                </div>
+            </div>
+
+            <div class="hazard-stripe h-2 w-full rounded-sm mb-3"></div>
+
+            <div class="flex flex-wrap items-center justify-between gap-2 border-t border-[#2D313D] pt-3">
+                <nav class="flex items-center gap-2">
+                    <button type="button" id="btn-mode-live" class="tactile-btn px-4 py-1.5 text-xs font-bold font-mono-code tracking-wider rounded text-[#FF4D00] border-[#FF4D00]/40">
+                        [MODE 01 // LIVE COMMS]
+                    </button>
+                    <button type="button" id="btn-mode-bundles" class="tactile-btn px-4 py-1.5 text-xs font-bold font-mono-code tracking-wider rounded text-zinc-400">
+                        [MODE 02 // BUNDLE MATRIX]
+                    </button>
+                </nav>
+
+                <div class="flex items-center gap-3 text-[11px] font-mono-code">
+                    <span class="telemetry-cyan">SYS-ID: SP-800-FDR</span>
+                    <span class="telemetry-yellow font-bold">[OFFLINE ENGINE]</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="bg-[#14171B] border-x-2 border-b-2 border-[#2D313D] rounded-b-lg p-3 md:p-6 shadow-2xl relative">
+            <svg class="foliage-decal -bottom-2 -left-2 w-12 h-12 pointer-events-none" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0 32C8 28 14 34 20 40C12 44 4 46 0 48V32Z" fill="#15803D"/>
+                <path d="M4 36C10 32 14 36 18 42C12 44 6 44 2 44L4 36Z" fill="#22C55E"/>
+                <circle cx="10" cy="38" r="2.5" fill="#86EFAC"/>
+                <circle cx="16" cy="42" r="1.5" fill="#86EFAC"/>
+            </svg>
+
+            <svg class="foliage-decal -bottom-2 right-12 w-24 h-8 pointer-events-none" viewBox="0 0 80 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0 32C10 24 20 28 30 20C40 16 50 26 60 22C70 18 75 28 80 32H0Z" fill="#15803D"/>
+                <path d="M8 32C16 26 24 28 32 24C40 20 48 28 56 26C64 22 70 30 74 32H8Z" fill="#22C55E"/>
+                <circle cx="22" cy="24" r="2" fill="#86EFAC"/>
+                <circle cx="45" cy="22" r="1.8" fill="#86EFAC"/>
+                <circle cx="62" cy="25" r="1.5" fill="#86EFAC"/>
+            </svg>
+
+            <section id="module-live-comms" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <div class="lg:col-span-5 flex flex-col gap-4">
+                    <div class="bg-[#1A1C23] border border-[#2D313D] p-4 rounded-md relative">
+                        <div class="flex items-center justify-between pb-2 mb-3 border-b border-[#2D313D]">
+                            <div class="flex items-center gap-2">
+                                <span class="chassis-screw"></span>
+                                <h2 class="text-xs font-bold tracking-widest text-[#FFB300] uppercase font-mono-code">FREQUENCY BAND // CIPHER CHANNEL</h2>
+                            </div>
+                            <span class="text-[10px] font-mono-code telemetry-cyan font-bold">[STEP-TUNER]</span>
+                        </div>
+
+                        <div class="relative">
+                            <button type="button" id="btn-freq-active" class="frequency-tuner-box w-full p-2.5 rounded text-xs font-mono-code flex items-center justify-between cursor-pointer">
+                                <div class="flex items-center gap-2">
+                                    <span class="led-indicator led-amber"></span>
+                                    <span class="text-arc-amber font-mono-code font-bold tracking-wider">[ 94.6 MHz ]</span>
+                                    <span class="text-zinc-200 font-mono-code">ENGLISH // EN</span>
+                                </div>
+                                <div class="flex items-center gap-1.5 text-[10px] font-mono-code text-zinc-400">
+                                    <span class="text-zinc-400">[TUNE]</span>
+                                    <span>▾</span>
+                                </div>
+                            </button>
+
+                            <div id="frequency-tuner-popover" class="hidden absolute top-full left-0 right-0 mt-1 bg-[#14171B] border-2 border-[#2D313D] rounded shadow-2xl p-2 z-40 max-h-56 overflow-y-auto">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-[#1A1C23] border border-[#2D313D] p-4 rounded-md flex flex-col">
+                        <div class="flex items-center justify-between pb-2 mb-2 border-b border-[#2D313D]">
+                            <div class="flex items-center gap-2">
+                                <span class="chassis-screw"></span>
+                                <h2 class="text-xs font-bold tracking-widest text-[#FF4D00] uppercase font-mono-code">INCOMING CARRIER // RAW SIGNAL</h2>
+                            </div>
+                            <span id="carrier-char-count" class="text-[10px] font-mono-code telemetry-cyan font-bold">0 B</span>
+                        </div>
+
+                        <div class="crt-viewport crt-viewport-flush-bottom min-h-[200px] p-2 flex flex-col">
+                            <textarea id="carrier-input" placeholder="INPUT TACTICAL TRANSMISSION..." class="w-full flex-1 bg-transparent text-[#33FF77] font-mono-code text-sm p-2 outline-none resize-none crt-content placeholder:text-zinc-700"></textarea>
+                        </div>
+
+                        <div class="terminal-footer-bar p-2.5 flex items-center justify-between border-2 border-t-0 border-[#14171B] rounded-b-md">
+                            <div class="flex items-center gap-2 pl-1 text-[10px] font-mono-code text-zinc-400">
+                                <span class="led-indicator led-green"></span>
+                                <span class="telemetry-green font-bold">CARRIER INGEST: READY</span>
+                            </div>
+                            <button type="button" id="btn-decrypt-synthesize" class="tactile-btn tactile-btn-hazard py-2 px-4 rounded font-mono-code font-bold text-xs tracking-wider flex items-center gap-2">
+                                <span class="led-indicator led-green"></span>
+                                <span>ACT-01 // DECRYPT &amp; SYNTHESIZE</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-[#1A1C23] border border-[#2D313D] p-4 rounded-md">
+                        <div class="flex items-center justify-between pb-2 mb-3 border-b border-[#2D313D]">
+                            <div class="flex items-center gap-2">
+                                <span class="chassis-screw"></span>
+                                <h2 class="text-xs font-bold tracking-widest text-[#EDE8D0] uppercase font-mono-code">TARGET CHANNELS // RELAY RECEPTORS</h2>
+                            </div>
+                            <span class="text-[10px] font-mono-code telemetry-cyan font-bold">[MULTI A–Z]</span>
+                        </div>
+                        <div id="target-chips-container" class="flex flex-wrap gap-1.5">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-7 flex flex-col">
+                    <div class="bg-[#1A1C23] border border-[#2D313D] p-4 rounded-md flex-1 flex flex-col">
+                        <div class="flex items-center justify-between pb-2 mb-3 border-b border-[#2D313D]">
+                            <div class="flex items-center gap-2">
+                                <span class="chassis-screw"></span>
+                                <h2 class="text-xs font-bold tracking-widest text-[#33FF77] uppercase font-mono-code">CLEARED COMMS // DECODED PAYLOAD</h2>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span id="synthesis-status" class="text-[10px] font-mono-code telemetry-cyan font-bold">STANDBY</span>
+                                <span class="chassis-screw"></span>
+                            </div>
+                        </div>
+
+                        <div id="outputs-container" class="flex-1 overflow-y-auto max-h-[620px] pr-1">
+                            <div class="p-6 text-center text-xs font-mono-code text-zinc-500">
+                                [STANDBY // AWAITING CARRIER FREQUENCY INGESTION]
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="module-bundle-matrix" class="hidden flex flex-col gap-6">
+                <div class="bg-[#1A1C23] border border-[#2D313D] p-4 rounded-md flex flex-wrap items-center justify-between gap-4">
+                    <div class="flex flex-wrap items-center gap-3">
+                        <span class="chassis-screw"></span>
+                        <div>
+                            <span class="text-[10px] font-mono-code text-zinc-500 tracking-wider">ACTIVE VOCABULARY PACK</span>
+                            <div class="flex items-center gap-2 mt-0.5">
+                                <select id="bundle-select" class="bg-[#0E0F12] border border-[#2D313D] text-[#EDE8D0] px-3 py-1.5 text-xs font-mono-code rounded focus:outline-none focus:border-[#FF4D00]">
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="button" id="btn-new-bundle" class="tactile-btn px-4 py-2 text-xs font-mono-code font-bold text-[#FFB300] border-[#FFB300]/40 rounded hover:border-[#FFB300]">
+                        + INITIALIZE NEW PACK
+                    </button>
+                </div>
+
+                <div class="bg-[#1A1C23] border border-[#2D313D] p-4 rounded-md">
+                    <form id="add-entry-form" class="flex flex-wrap items-center gap-3">
+                        <div class="w-28">
+                            <label class="block text-[10px] font-mono-code text-zinc-500 mb-1">SOURCE FREQ</label>
+                            <select id="entry-source-lang" class="w-full bg-[#0E0F12] border border-[#2D313D] text-[#EDE8D0] p-2 text-xs font-mono-code rounded focus:outline-none focus:border-[#FF4D00]">
+                            </select>
+                        </div>
+                        <div class="flex-1 min-w-[240px]">
+                            <label class="block text-[10px] font-mono-code text-zinc-500 mb-1">RAW PHRASE // PAYLOAD TEXT</label>
+                            <input type="text" id="entry-text-input" placeholder="ENTER TACTICAL VOCABULARY..." class="w-full bg-[#0E0F12] border border-[#2D313D] text-[#EDE8D0] p-2 text-xs font-mono-code rounded focus:outline-none focus:border-[#FF4D00]">
+                        </div>
+                        <div class="pt-5 flex items-center gap-3">
+                            <button type="submit" id="btn-add-entry" class="tactile-btn tactile-btn-hazard px-5 py-2 text-xs font-mono-code font-bold rounded">
+                                ENCODE &amp; DISTRIBUTE
+                            </button>
+                            <span id="entry-submit-status" class="text-xs font-mono-code telemetry-orange hidden">DECRYPTING &amp; DISTRIBUTING...</span>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="bg-[#1A1C23] border border-[#2D313D] rounded-md overflow-hidden">
+                    <div class="p-3 border-b border-[#2D313D] flex items-center justify-between bg-[#14171B]">
+                        <div class="flex items-center gap-2">
+                            <span class="chassis-screw"></span>
+                            <span class="text-xs font-mono-code font-bold tracking-wider text-[#FFB300]">CIPHER ARCHIVE DATA MATRIX</span>
+                        </div>
+                        <span class="text-[10px] font-mono-code telemetry-cyan font-bold">[CASCADE REPLICATION ACTIVE]</span>
+                    </div>
+
+                    <div id="bundle-matrix-container" class="min-h-[250px]">
+                        <div class="p-8 text-center text-xs font-mono-code text-zinc-500">
+                            [AWAITING ARCHIVE SELECTION]
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="mt-4 flex flex-wrap items-center justify-between text-[11px] font-mono-code text-zinc-500 px-2">
+            <div>
+                <span>CASSETTE-FUTURISM HARDWARE INTERCEPTOR</span>
+                <span class="mx-2">//</span>
+                <span class="telemetry-green font-bold">ROOTLESS PODMAN COMPLIANT</span>
+            </div>
+            <div>
+                <span class="telemetry-cyan font-bold">FEDORA LINUX SELINUX SECURE</span>
+            </div>
+        </footer>
+    </div>
+
+    <div id="new-bundle-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-[#1A1C23] border-2 border-[#2D313D] rounded-lg max-w-lg w-full p-6 shadow-2xl relative">
+            <div class="flex items-center justify-between pb-3 mb-4 border-b border-[#2D313D]">
+                <div class="flex items-center gap-2">
+                    <span class="chassis-screw"></span>
+                    <h3 class="text-sm font-bold font-mono-code tracking-wider text-[#FF4D00]">INITIALIZE NEW VOCABULARY PACK</h3>
+                </div>
+                <button type="button" id="btn-close-modal" class="text-zinc-500 hover:text-zinc-200 text-lg leading-none font-mono-code">&times;</button>
+            </div>
+
+            <form id="new-bundle-form" class="flex flex-col gap-4">
+                <div>
+                    <label class="block text-xs font-mono-code text-zinc-400 mb-1">PACK IDENTIFIER / NAME</label>
+                    <input type="text" id="new-bundle-name" placeholder="E.G. SECTOR_7_CALLOUTS" required class="w-full bg-[#0E0F12] border border-[#2D313D] text-[#EDE8D0] p-2 text-xs font-mono-code rounded focus:outline-none focus:border-[#FF4D00]">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-mono-code text-zinc-400 mb-2">TARGET CIPHER FREQUENCIES (SELECT 2 OR MORE)</label>
+                    <div id="new-bundle-languages-container" class="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto p-1 border border-[#2D313D] bg-[#0E0F12] rounded">
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-end gap-3 pt-3 border-t border-[#2D313D]">
+                    <button type="button" onclick="document.getElementById('new-bundle-modal').classList.add('hidden')" class="tactile-btn px-4 py-2 text-xs font-mono-code text-zinc-400 rounded">
+                        ABORT
+                    </button>
+                    <button type="submit" class="tactile-btn tactile-btn-hazard px-5 py-2 text-xs font-mono-code font-bold text-white rounded">
+                        CONFIRM &amp; INITIALIZE
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/static/js/api.js"></script>
+    <script src="/static/js/translate.js"></script>
+    <script src="/static/js/bundles.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const btnModeLive = document.getElementById('btn-mode-live');
+            const btnModeBundles = document.getElementById('btn-mode-bundles');
+            const moduleLive = document.getElementById('module-live-comms');
+            const moduleBundles = document.getElementById('module-bundle-matrix');
+
+            btnModeLive.addEventListener('click', () => {
+                btnModeLive.classList.remove('text-zinc-400');
+                btnModeLive.classList.add('text-[#FF4D00]', 'border-[#FF4D00]/40');
+                btnModeBundles.classList.remove('text-[#FF4D00]', 'border-[#FF4D00]/40');
+                btnModeBundles.classList.add('text-zinc-400');
+                moduleLive.classList.remove('hidden');
+                moduleBundles.classList.add('hidden');
+            });
+
+            btnModeBundles.addEventListener('click', () => {
+                btnModeBundles.classList.remove('text-zinc-400');
+                btnModeBundles.classList.add('text-[#FF4D00]', 'border-[#FF4D00]/40');
+                btnModeLive.classList.remove('text-[#FF4D00]', 'border-[#FF4D00]/40');
+                btnModeLive.classList.add('text-zinc-400');
+                moduleBundles.classList.remove('hidden');
+                moduleLive.classList.add('hidden');
+            });
+
+            await TranslateController.init();
+            await BundlesController.init();
+        });
+    </script>
 </body>
 </html>

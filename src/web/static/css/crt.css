@@ -1,0 +1,93 @@
+.crt-viewport {
+  position: relative;
+  background-color: var(--crt-bg);
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.95), inset 0 0 6px rgba(0, 255, 100, 0.15);
+  border: 3px solid #14171b;
+}
+
+.crt-viewport-flush-bottom {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom: none;
+}
+
+.crt-viewport::before {
+  content: " ";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.45) 50%),
+              linear-gradient(90deg, rgba(255, 0, 0, 0.04), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.04));
+  z-index: 20;
+  background-size: 100% 3px, 6px 100%;
+  pointer-events: none;
+}
+
+.crt-viewport::after {
+  content: " ";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, transparent 65%, rgba(0, 0, 0, 0.82) 100%);
+  pointer-events: none;
+  z-index: 21;
+}
+
+@keyframes crt-flicker {
+  0% {
+    opacity: 0.985;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.975;
+  }
+}
+
+.crt-content {
+  animation: crt-flicker 0.15s infinite;
+  text-shadow: 0 0 4px rgba(51, 255, 119, 0.55), 0 0 8px rgba(51, 255, 119, 0.25);
+  color: var(--crt-green);
+}
+
+.crt-amber {
+  color: var(--crt-amber);
+  text-shadow: 0 0 4px rgba(255, 184, 51, 0.55), 0 0 8px rgba(255, 184, 51, 0.25);
+}
+
+.crt-cyan {
+  color: var(--crt-cyan);
+  text-shadow: 0 0 4px rgba(46, 230, 214, 0.55), 0 0 8px rgba(46, 230, 214, 0.25);
+}
+
+@keyframes chromatic-shift {
+  0% {
+    text-shadow: -2px 0 rgba(255, 0, 0, 0.7), 2px 0 rgba(0, 255, 255, 0.7);
+    transform: translate(0, 0);
+  }
+  20% {
+    text-shadow: 2px 0 rgba(255, 0, 0, 0.7), -2px 0 rgba(0, 255, 255, 0.7);
+    transform: translate(-1px, 0.5px);
+  }
+  40% {
+    text-shadow: -1px 0 rgba(255, 0, 0, 0.7), 1px 0 rgba(0, 255, 255, 0.7);
+    transform: translate(1px, -0.5px);
+  }
+  60% {
+    text-shadow: -2px 0 rgba(255, 0, 0, 0.7), 2px 0 rgba(0, 255, 255, 0.7);
+    transform: translate(0, 0);
+  }
+  80% {
+    text-shadow: 1px 0 rgba(255, 0, 0, 0.7), -1px 0 rgba(0, 255, 255, 0.7);
+    transform: translate(0.5px, 0);
+  }
+  100% {
+    text-shadow: -2px 0 rgba(255, 0, 0, 0.7), 2px 0 rgba(0, 255, 255, 0.7);
+    transform: translate(0, 0);
+  }
+}
+
+.crt-distort-active {
+  animation: chromatic-shift 0.12s infinite linear, crt-flicker 0.1s infinite;
+}

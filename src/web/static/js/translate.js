@@ -1,0 +1,277 @@
+const TranslateController = {
+  debounceTimer: null,
+  selectedTargetLangs: new Set(['nl']),
+  selectedSourceLang: 'en',
+  languages: [],
+
+  async init() {
+    await this.loadLanguages();
+    this.bindEvents();
+    this.renderFrequencySelector();
+    this.renderTargetSelectors();
+    this.triggerTranslation();
+  },
+
+  async loadLanguages() {
+    try {
+      this.languages = await API.getLanguages();
+    } catch (e) {
+      console.error(e);
+    }
+  },
+
+  getFrequency(code) {
+    const table = {
+      en: '94.6',
+      nl: '104.2',
+      de: '89.8',
+      fr: '98.1',
+      es: '102.5',
+      it: '91.3',
+      pl: '106.7',
+      ru: '96.4',
+      zh: '107.9',
+      ar: '90.2',
+      pt: '93.5',
+      ja: '105.1',
+      ko: '99.4',
+      tr: '95.8',
+      sv: '101.3',
+      da: '97.2',
+      fi: '103.8',
+      el: '92.7',
+      cs: '100.9',
+      uk: '88.9'
+    };
+    if (table[code]) return table[code];
+    let sum = 0;
+    for (let i = 0; i < code.length; i++) {
+      sum += code.charCodeAt(i) * (i + 1);
+    }
+    return (88.0 + (sum % 190) * 0.1).toFixed(1);
+  },
+
+  renderFrequencySelector() {
+    const displayBtn = document.getElementById('btn-freq-active');
+    const popover = document.getElementById('frequency-tuner-popover');
+    if (!displayBtn || !popover) return;
+
+    const currentLang = this.languages.find(l => l.code === this.selectedSourceLang) || {
+      code: this.selectedSourceLang,
+      name: this.selectedSourceLang.toUpperCase()
+    };
+    const currentMhz = this.getFrequency(currentLang.code);
+
+    displayBtn.innerHTML = `
+      <div class="flex items-center gap-2">
+        <span class="led-indicator led-amber"></span>
+        <span class="text-arc-amber font-mono-code font-bold tracking-wider">[ ${currentMhz} MHz ]</span>
+        <span class="text-zinc-200 font-mono-code">${currentLang.name.toUpperCase()} // ${currentLang.code.toUpperCase()}</span>
+      </div>
+      <div class="flex items-center gap-1.5 text-[10px] font-mono-code text-zinc-500">
+        <span class="text-zinc-400">[TUNE]</span>
+        <span>▾</span>
+      </div>
+    `;
+
+    const sorted = [...this.languages].sort((a, b) => a.name.localeCompare(b.name));
+    popover.innerHTML = '';
+
+    for (const lang of sorted) {
+      const mhz = this.getFrequency(lang.code);
+      const isActive = lang.code === this.selectedSourceLang;
+      const item = document.createElement('div');
+      item.className = `frequency-item p-2 rounded border border-[#2D313D] flex items-center justify-between text-xs font-mono-code mb-1 ${isActive ? 'active' : 'bg-[#0E0F12] text-zinc-300'}`;
+      item.innerHTML = `
+        <div class="flex items-center gap-2.5">
+          <span class="font-bold text-arc-amber">[ ${mhz} MHz ]</span>
+          <span>${lang.name.toUpperCase()}</span>
+          <span class="text-[10px] opacity-60 font-bold">${lang.code.toUpperCase()}</span>
+        </div>
+        <span class="led-indicator ${isActive ? 'led-orange' : 'bg-zinc-700'}"></span>
+      `;
+
+      item.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.selectedSourceLang = lang.code;
+        popover.classList.add('hidden');
+        this.renderFrequencySelector();
+        this.triggerTranslation();
+      });
+
+      popover.appendChild(item);
+    }
+  },
+
+  renderTargetSelectors() {
+    const container = document.getElementById('target-chips-container');
+    if (!container) return;
+    container.innerHTML = '';
+
+    const sortedLanguages = [...this.languages].sort((a, b) => a.name.localeCompare(b.name));
+
+    for (const lang of sortedLanguages) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      const isActive = this.selectedTargetLangs.has(lang.code);
+      btn.className = `tactile-chip px-2.5 py-1 text-xs font-mono-code font-bold uppercase rounded cursor-pointer transition ${isActive ? 'active' : ''}`;
+      btn.dataset.code = lang.code;
+      btn.innerHTML = `${lang.name} <span class="text-[10px] opacity-75">${lang.code}</span>`;
+
+      btn.addEventListener('click', () => {
+        if (this.selectedTargetLangs.has(lang.code)) {
+          if (this.selectedTargetLangs.size > 1) {
+            this.selectedTargetLangs.delete(lang.code);
+            btn.classList.remove('active');
+          }
+        } else {
+          this.selectedTargetLangs.add(lang.code);
+          btn.classList.add('active');
+        }
+        this.triggerTranslation();
+      });
+
+      container.appendChild(btn);
+    }
+  },
+
+  bindEvents() {
+    const input = document.getElementById('carrier-input');
+    const execBtn = document.getElementById('btn-decrypt-synthesize');
+    const freqDisplayBtn = document.getElementById('btn-freq-active');
+    const popover = document.getElementById('frequency-tuner-popover');
+
+    if (input) {
+      input.addEventListener('input', (e) => {
+        const count = document.getElementById('carrier-char-count');
+        if (count) count.textContent = `${e.target.value.length} B`;
+        clearTimeout(this.debounceTimer);
+        this.debounceTimer = setTimeout(() => {
+          this.triggerTranslation();
+        }, 400);
+      });
+    }
+
+    if (execBtn) {
+      execBtn.addEventListener('click', () => {
+        this.triggerTranslation(true);
+      });
+    }
+
+    if (freqDisplayBtn && popover) {
+      freqDisplayBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        popover.classList.toggle('hidden');
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!popover.contains(e.target) && !freqDisplayBtn.contains(e.target)) {
+          popover.classList.add('hidden');
+        }
+      });
+    }
+  },
+
+  async triggerTranslation(immediate = false) {
+    const input = document.getElementById('carrier-input');
+    if (!input) return;
+    const text = input.value.trim();
+    const container = document.getElementById('outputs-container');
+    const statusText = document.getElementById('synthesis-status');
+
+    if (!text) {
+      if (container) {
+        container.innerHTML = `
+          <div class="p-6 text-center text-xs font-mono-code text-zinc-500">
+            [STANDBY // AWAITING CARRIER FREQUENCY INGESTION]
+          </div>
+        `;
+      }
+      if (statusText) statusText.textContent = 'STANDBY';
+      return;
+    }
+
+    const targets = Array.from(this.selectedTargetLangs);
+    if (targets.length === 0) return;
+
+    if (statusText) {
+      statusText.textContent = 'SYNTHESIZING...';
+      statusText.classList.add('text-arc-orange');
+    }
+    if (container) {
+      container.classList.add('crt-distort-active');
+    }
+
+    try {
+      const res = await API.translate(text, this.selectedSourceLang, targets);
+      this.renderOutputs(res.translations);
+      if (statusText) {
+        statusText.textContent = 'PAYLOAD LOCKED';
+        statusText.classList.remove('text-arc-orange');
+      }
+    } catch (err) {
+      if (statusText) {
+        statusText.textContent = 'SYNTHESIS ERR';
+        statusText.classList.add('text-arc-orange');
+      }
+      if (container) {
+        container.innerHTML = `
+          <div class="p-4 text-xs font-mono-code text-red-500 border border-red-900 bg-red-950/20">
+            SYNTHESIS FAILED: ${err.message}
+          </div>
+        `;
+      }
+    } finally {
+      if (container) {
+        container.classList.remove('crt-distort-active');
+      }
+    }
+  },
+
+  renderOutputs(translations) {
+    const container = document.getElementById('outputs-container');
+    if (!container) return;
+    container.innerHTML = '';
+
+    const langMap = {};
+    for (const l of this.languages) {
+      langMap[l.code] = l.name;
+    }
+
+    for (const [code, text] of Object.entries(translations)) {
+      const card = document.createElement('div');
+      card.className = 'crt-viewport p-4 mb-3 border border-zinc-800 rounded bg-[#070B08]';
+      const langName = langMap[code] || code.toUpperCase();
+      const mhz = this.getFrequency(code);
+
+      card.innerHTML = `
+        <div class="flex items-center justify-between pb-2 mb-2 border-b border-zinc-800 text-[11px] font-mono-code">
+          <div class="flex items-center gap-2">
+            <span class="led-indicator led-green"></span>
+            <span class="text-arc-amber font-bold">[ ${mhz} MHz ]</span>
+            <span class="text-zinc-300 font-bold">${langName.toUpperCase()} // CH-[${code.toUpperCase()}]</span>
+          </div>
+          <button type="button" class="copy-btn tactile-btn px-2 py-0.5 text-[10px] text-zinc-300 rounded hover:text-white" data-text="${encodeURIComponent(text)}">
+            COPY PAYLOAD
+          </button>
+        </div>
+        <div class="crt-content text-sm leading-relaxed font-mono-code select-all break-words">${text}</div>
+      `;
+
+      const copyBtn = card.querySelector('.copy-btn');
+      copyBtn.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(decodeURIComponent(copyBtn.dataset.text));
+          copyBtn.textContent = 'COPIED // OK';
+          copyBtn.classList.add('text-crt-green');
+          setTimeout(() => {
+            copyBtn.textContent = 'COPY PAYLOAD';
+            copyBtn.classList.remove('text-crt-green');
+          }, 1500);
+        } catch (_) {}
+      });
+
+      container.appendChild(card);
+    }
+  },
+};

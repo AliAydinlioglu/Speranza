@@ -1,0 +1,268 @@
+:root {
+  --chassis-dark: #0E0F12;
+  --chassis-metal: #1A1C23;
+  --chassis-border: #2D313D;
+  --chassis-highlight: #3D4353;
+
+  --arc-orange: #FF4D00;
+  --arc-orange-glow: rgba(255, 77, 0, 0.45);
+  --arc-amber: #FFB300;
+  --arc-bone: #EDE8D0;
+  --arc-olive: #3F4A3C;
+
+  --crt-bg: #070B08;
+  --crt-green: #33FF77;
+  --crt-amber: #FFB833;
+  --crt-cyan: #2EE6D6;
+
+  --arc-red: #E11D48;
+  --arc-yellow: #FACC15;
+  --arc-lightgreen: #4ADE80;
+  --arc-lightblue: #38BDF8;
+
+  --foliage-deep: #15803D;
+  --foliage-mid: #22C55E;
+  --foliage-light: #86EFAC;
+}
+
+body {
+  background-color: var(--chassis-dark);
+  color: var(--arc-bone);
+  font-family: 'Chakra Petch', sans-serif;
+  overflow-x: hidden;
+}
+
+.font-mono-code {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.chassis-screw {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #2d313d 30%, #14171b 90%);
+  border: 1px solid #3d4353;
+  box-shadow: inset 1px 1px 1px rgba(255, 255, 255, 0.15), 1px 1px 2px rgba(0, 0, 0, 0.8);
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.chassis-screw::before {
+  content: "";
+  width: 7px;
+  height: 1.5px;
+  background: #0e0f12;
+  transform: rotate(45deg);
+}
+
+.chassis-screw::after {
+  content: "";
+  position: absolute;
+  width: 7px;
+  height: 1.5px;
+  background: #0e0f12;
+  transform: rotate(-45deg);
+}
+
+.hazard-stripe {
+  background: repeating-linear-gradient(
+    -45deg,
+    #ff4d00,
+    #ff4d00 8px,
+    #1a1c23 8px,
+    #1a1c23 16px
+  );
+}
+
+.hazard-stripe-muted {
+  background: repeating-linear-gradient(
+    -45deg,
+    #2d313d,
+    #2d313d 8px,
+    #1a1c23 8px,
+    #1a1c23 16px
+  );
+}
+
+.arc-spectrum-bar {
+  display: flex;
+  height: 4px;
+  width: 100%;
+  overflow: hidden;
+}
+
+.arc-spectrum-bar span:nth-child(1) { background-color: var(--arc-red); flex: 1; }
+.arc-spectrum-bar span:nth-child(2) { background-color: var(--arc-orange); flex: 1; }
+.arc-spectrum-bar span:nth-child(3) { background-color: var(--arc-yellow); flex: 1; }
+.arc-spectrum-bar span:nth-child(4) { background-color: var(--arc-lightgreen); flex: 1; }
+.arc-spectrum-bar span:nth-child(5) { background-color: var(--arc-lightblue); flex: 1; }
+
+.telemetry-cyan { color: var(--arc-lightblue); }
+.telemetry-yellow { color: var(--arc-yellow); }
+.telemetry-green { color: var(--arc-lightgreen); }
+.telemetry-red { color: var(--arc-red); }
+.telemetry-orange { color: var(--arc-orange); }
+
+.led-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.led-green {
+  background-color: var(--crt-green);
+  box-shadow: 0 0 6px var(--crt-green), 0 0 10px rgba(51, 255, 119, 0.7);
+}
+
+.led-green-pulse {
+  animation: led-pulse-anim 1.6s infinite ease-in-out;
+}
+
+@keyframes led-pulse-anim {
+  0%, 100% {
+    opacity: 1;
+    filter: brightness(1.2);
+  }
+  50% {
+    opacity: 0.35;
+    filter: brightness(0.6);
+  }
+}
+
+.led-orange {
+  background-color: var(--arc-orange);
+  box-shadow: 0 0 6px var(--arc-orange), 0 0 10px var(--arc-orange-glow);
+}
+
+.led-amber {
+  background-color: var(--arc-amber);
+  box-shadow: 0 0 6px var(--arc-amber), 0 0 8px rgba(255, 179, 0, 0.5);
+}
+
+.tactile-btn {
+  position: relative;
+  background: linear-gradient(180deg, #262933 0%, #15171d 100%);
+  border: 1px solid var(--chassis-border);
+  border-bottom: 3px solid #0e0f12;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 2px 4px rgba(0, 0, 0, 0.6);
+  transition: all 0.08s ease-in-out;
+  cursor: pointer;
+  user-select: none;
+}
+
+.tactile-btn:hover {
+  background: linear-gradient(180deg, #313644 0%, #1c1f27 100%);
+  border-color: var(--chassis-highlight);
+}
+
+.tactile-btn:active {
+  transform: translateY(2px);
+  border-bottom-width: 1px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.tactile-btn-hazard {
+  background: linear-gradient(180deg, #ff5714 0%, #cc3d00 100%);
+  border-color: #ff6b33;
+  border-bottom: 3px solid #802600;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 0 12px rgba(255, 77, 0, 0.45);
+  color: #fff;
+}
+
+.tactile-btn-hazard:hover {
+  background: linear-gradient(180deg, #ff6b33 0%, #e64500 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 0 18px rgba(255, 77, 0, 0.65);
+}
+
+.tactile-btn-hazard:active {
+  transform: translateY(2px);
+  border-bottom-width: 1px;
+}
+
+.tactile-chip {
+  background: #14171b;
+  border: 1px solid var(--chassis-border);
+  color: #7b849b;
+  transition: all 0.12s ease-in-out;
+}
+
+.tactile-chip:hover {
+  border-color: var(--chassis-highlight);
+  color: var(--arc-bone);
+}
+
+.tactile-chip.active {
+  background: rgba(255, 77, 0, 0.15);
+  border-color: var(--arc-orange);
+  color: var(--arc-orange);
+  box-shadow: inset 0 0 8px rgba(255, 77, 0, 0.2);
+}
+
+.frequency-tuner-box {
+  background: #0E0F12;
+  border: 1px solid var(--chassis-border);
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.8);
+  transition: border-color 0.15s ease-in-out;
+}
+
+.frequency-tuner-box:hover {
+  border-color: var(--arc-amber);
+}
+
+.frequency-item {
+  transition: all 0.1s ease-in-out;
+  cursor: pointer;
+  user-select: none;
+}
+
+.frequency-item:hover {
+  background: rgba(255, 179, 0, 0.12);
+  color: var(--arc-amber);
+  border-color: var(--arc-amber);
+}
+
+.frequency-item.active {
+  background: rgba(255, 77, 0, 0.18);
+  color: var(--arc-orange);
+  border-color: var(--arc-orange);
+  box-shadow: inset 0 0 8px rgba(255, 77, 0, 0.25);
+}
+
+.terminal-footer-bar {
+  background: #14171B;
+  border-top: 1px solid var(--chassis-border);
+}
+
+.foliage-decal {
+  position: absolute;
+  pointer-events: none;
+  z-index: 30;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.7));
+}
+
+.foliage-moss-deep { fill: var(--foliage-deep); }
+.foliage-moss-mid { fill: var(--foliage-mid); }
+.foliage-moss-light { fill: var(--foliage-light); }
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--crt-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--chassis-border);
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--arc-orange);
+}
