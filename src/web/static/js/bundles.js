@@ -2,6 +2,28 @@ const BundlesController = {
   bundles: [],
   activeBundle: null,
   allLanguages: [],
+  activeEntrySourceLang: 'en',
+
+  getFrequency(code) {
+    const table = {
+      en: '94.6',
+      nl: '104.2',
+      de: '89.8',
+      fr: '98.1',
+      es: '102.5',
+      it: '91.3',
+      pl: '106.7',
+      ru: '96.4',
+      zh: '107.9',
+      ar: '90.2'
+    };
+    if (table[code]) return table[code];
+    let sum = 0;
+    for (let i = 0; i < code.length; i++) {
+      sum += code.charCodeAt(i) * (i + 1);
+    }
+    return (88.0 + (sum % 190) * 0.1).toFixed(1);
+  },
 
   async init() {
     await this.loadAllLanguages();
@@ -25,7 +47,7 @@ const BundlesController = {
 
     for (const lang of this.allLanguages) {
       const label = document.createElement('label');
-      label.className = 'flex items-center gap-2 p-2 bg-[#12141a] border border-[#2D313D] rounded cursor-pointer hover:border-zinc-500 text-xs font-mono-code';
+      label.className = 'flex items-center gap-2 p-2 bg-[#12141a] border border-[#2B303C] rounded cursor-pointer hover:border-zinc-500 text-xs font-mono-code';
       
       const isChecked = lang.code === 'en' || lang.code === 'nl';
       label.innerHTML = `
@@ -39,37 +61,96 @@ const BundlesController = {
   async loadBundles(selectBundleId = null) {
     try {
       this.bundles = await API.getBundles();
-      const select = document.getElementById('bundle-select');
-      if (!select) return;
-
-      select.innerHTML = '';
-      if (this.bundles.length === 0) {
-        select.innerHTML = '<option value="">[NO BUNDLES INITIALIZED]</option>';
-        this.renderEmptyMatrix();
-        return;
-      }
-
-      for (const b of this.bundles) {
-        const opt = document.createElement('option');
-        opt.value = b.id;
-        opt.textContent = `${b.name.toUpperCase()} (${b.languages.join('/')}) [${b.item_count} ITEMS]`;
-        select.appendChild(opt);
-      }
-
       const targetId = selectBundleId || (this.bundles[0] ? this.bundles[0].id : null);
+
+      this.renderBundleSelector(targetId);
+
       if (targetId) {
-        select.value = targetId;
         await this.loadBundle(targetId);
+      } else {
+        this.renderEmptyMatrix();
       }
     } catch (e) {
       console.error(e);
     }
   },
 
+  renderBundleSelector(activeId) {
+    const btn = document.getElementById('btn-bundle-active');
+    const popover = document.getElementById('bundle-select-popover');
+    if (!btn || !popover) return;
+
+    if (this.bundles.length === 0) {
+      btn.innerHTML = `
+        <div class="flex items-center gap-2 text-zinc-500">
+          <span class="led-indicator bg-zinc-700"></span>
+          <span>[NO BUNDLES INITIALIZED]</span>
+        </div>
+        <span class="text-zinc-600 text-[10px]">▾</span>
+      `;
+      popover.innerHTML = '';
+      return;
+    }
+
+    const current = this.bundles.find(b => b.id === activeId) || this.bundles[0];
+    const currentIndex = this.bundles.indexOf(current) + 1;
+    const padIndex = String(currentIndex).padStart(2, '0');
+    const langSummary = current.languages.length <= 3 
+      ? `(${current.languages.join('/')})` 
+      : `(${current.languages.slice(0, 2).join('/')}/+${current.languages.length - 2})`;
+
+    btn.innerHTML = `
+      <div class="flex items-center gap-2 overflow-hidden text-ellipsis whitespace-nowrap min-w-0">
+        <span class="led-indicator led-orange flex-shrink-0"></span>
+        <span class="text-arc-orange font-mono-code font-bold tracking-wider flex-shrink-0">[ PACK-${padIndex} ]</span>
+        <span class="text-zinc-200 font-mono-code font-bold truncate">${current.name.toUpperCase()}</span>
+        <span class="text-[10px] font-mono-code text-zinc-500 flex-shrink-0">${langSummary}</span>
+      </div>
+      <div class="flex items-center gap-1.5 text-[10px] font-mono-code text-zinc-400 flex-shrink-0 ml-2">
+        <span class="text-zinc-400">[SELECT]</span>
+        <span>▾</span>
+      </div>
+    `;
+
+    popover.innerHTML = '';
+    this.bundles.forEach((b, idx) => {
+      const pIndex = String(idx + 1).padStart(2, '0');
+      const isActive = b.id === current.id;
+      const bSummary = b.languages.length <= 4 
+        ? `(${b.languages.join('/')})` 
+        : `(${b.languages.slice(0, 3).join('/')}/+${b.languages.length - 3})`;
+      const item = document.createElement('div');
+      item.className = `frequency-item p-2 rounded border border-[#2B303C] flex items-center justify-between text-xs font-mono-code mb-1 ${isActive ? 'active' : 'bg-[#0E0F12] text-zinc-300'}`;
+      item.innerHTML = `
+        <div class="flex items-center gap-2 truncate min-w-0">
+          <span class="font-bold text-arc-orange flex-shrink-0">[ PACK-${pIndex} ]</span>
+          <span class="font-bold truncate">${b.name.toUpperCase()}</span>
+          <span class="text-[10px] text-zinc-500 flex-shrink-0">${bSummary}</span>
+          <span class="text-[10px] text-zinc-400 ml-1 flex-shrink-0">[${b.item_count} ITEMS]</span>
+        </div>
+        <span class="led-indicator ${isActive ? 'led-orange' : 'bg-zinc-700'} flex-shrink-0 ml-2"></span>
+      `;
+
+      item.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        popover.classList.add('hidden');
+        await this.loadBundle(b.id);
+        this.renderBundleSelector(b.id);
+      });
+
+      popover.appendChild(item);
+    });
+  },
+
   async loadBundle(id) {
     if (!id) return;
     try {
       this.activeBundle = await API.getBundle(id);
+      if (this.activeBundle && this.activeBundle.languages.length > 0) {
+        if (!this.activeBundle.languages.includes(this.activeEntrySourceLang)) {
+          this.activeEntrySourceLang = this.activeBundle.languages[0];
+        }
+      }
       this.renderMatrix();
       this.populateEntrySourceLangs();
     } catch (e) {
@@ -78,15 +159,63 @@ const BundlesController = {
   },
 
   populateEntrySourceLangs() {
-    const select = document.getElementById('entry-source-lang');
-    if (!select || !this.activeBundle) return;
-    select.innerHTML = '';
+    const btn = document.getElementById('btn-entry-lang-active');
+    const popover = document.getElementById('entry-lang-popover');
+    if (!btn || !popover) return;
 
+    if (!this.activeBundle || !this.activeBundle.languages || this.activeBundle.languages.length === 0) {
+      btn.innerHTML = `
+        <div class="flex items-center gap-1.5 text-zinc-500">
+          <span class="led-indicator bg-zinc-700"></span>
+          <span>[NO FREQ]</span>
+        </div>
+        <span class="text-zinc-600 text-[10px]">▾</span>
+      `;
+      popover.innerHTML = '';
+      return;
+    }
+
+    const currentLang = this.activeEntrySourceLang;
+    const currentMhz = this.getFrequency(currentLang);
+    const currentLangObj = this.allLanguages.find(l => l.code === currentLang);
+    const currentLabel = currentLangObj ? `${currentLangObj.name.toUpperCase()} // ${currentLang.toUpperCase()}` : currentLang.toUpperCase();
+
+    btn.innerHTML = `
+      <div class="flex items-center gap-2 truncate min-w-0">
+        <span class="led-indicator led-amber flex-shrink-0"></span>
+        <span class="text-arc-amber font-mono-code font-bold tracking-wider flex-shrink-0">[ ${currentMhz} MHz ]</span>
+        <span class="text-zinc-200 font-mono-code font-bold truncate">${currentLabel}</span>
+      </div>
+      <div class="flex items-center gap-1 text-[10px] font-mono-code text-zinc-400 ml-1 flex-shrink-0">
+        <span class="hidden sm:inline">[TUNE]</span>
+        <span>▾</span>
+      </div>
+    `;
+
+    popover.innerHTML = '';
     for (const lang of this.activeBundle.languages) {
-      const opt = document.createElement('option');
-      opt.value = lang;
-      opt.textContent = lang.toUpperCase();
-      select.appendChild(opt);
+      const mhz = this.getFrequency(lang);
+      const isActive = lang === currentLang;
+      const langObj = this.allLanguages.find(l => l.code === lang);
+      const label = langObj ? `${langObj.name.toUpperCase()} ${lang.toUpperCase()}` : lang.toUpperCase();
+      const item = document.createElement('div');
+      item.className = `frequency-item p-2 rounded border border-[#2B303C] flex items-center justify-between text-xs font-mono-code mb-1 ${isActive ? 'active' : 'bg-[#0E0F12] text-zinc-300'}`;
+      item.innerHTML = `
+        <div class="flex items-center gap-2 truncate">
+          <span class="font-bold text-arc-amber">[ ${mhz} MHz ]</span>
+          <span class="truncate">${label}</span>
+        </div>
+        <span class="led-indicator ${isActive ? 'led-amber' : 'bg-zinc-700'} flex-shrink-0 ml-2"></span>
+      `;
+
+      item.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.activeEntrySourceLang = lang;
+        popover.classList.add('hidden');
+        this.populateEntrySourceLangs();
+      });
+
+      popover.appendChild(item);
     }
   },
 
@@ -107,8 +236,18 @@ const BundlesController = {
     const langs = this.activeBundle.languages;
     const entries = this.activeBundle.entries || [];
 
-    let ths = langs.map(l => `<th class="px-3 py-2 text-left text-xs font-bold text-arc-amber font-mono-code tracking-wider border-b border-[#2D313D]">${l.toUpperCase()}</th>`).join('');
-    ths += `<th class="px-3 py-2 text-right text-xs font-bold text-zinc-500 font-mono-code tracking-wider border-b border-[#2D313D]">ACTION</th>`;
+    let ths = langs.map(l => {
+      const mhz = this.getFrequency(l);
+      return `
+        <th class="px-3 py-2 text-left text-xs font-bold text-arc-amber font-mono-code tracking-wider border-b border-[#2B303C]">
+          <div class="flex items-center gap-1.5">
+            <span class="text-zinc-400 text-[10px]">[${mhz} MHz]</span>
+            <span>${l.toUpperCase()}</span>
+          </div>
+        </th>
+      `;
+    }).join('');
+    ths += `<th class="px-3 py-2 text-right text-xs font-bold text-zinc-500 font-mono-code tracking-wider border-b border-[#2B303C]">ACTION</th>`;
 
     let rowsHtml = '';
     if (entries.length === 0) {
@@ -169,12 +308,34 @@ const BundlesController = {
   },
 
   bindEvents() {
-    const bundleSelect = document.getElementById('bundle-select');
-    if (bundleSelect) {
-      bundleSelect.addEventListener('change', async (e) => {
-        await this.loadBundle(e.target.value);
+    const btnBundleActive = document.getElementById('btn-bundle-active');
+    const bundlePopover = document.getElementById('bundle-select-popover');
+
+    if (btnBundleActive && bundlePopover) {
+      btnBundleActive.addEventListener('click', (e) => {
+        e.stopPropagation();
+        bundlePopover.classList.toggle('hidden');
       });
     }
+
+    const btnEntryLangActive = document.getElementById('btn-entry-lang-active');
+    const entryLangPopover = document.getElementById('entry-lang-popover');
+
+    if (btnEntryLangActive && entryLangPopover) {
+      btnEntryLangActive.addEventListener('click', (e) => {
+        e.stopPropagation();
+        entryLangPopover.classList.toggle('hidden');
+      });
+    }
+
+    document.addEventListener('click', (e) => {
+      if (bundlePopover && !bundlePopover.contains(e.target) && btnBundleActive && !btnBundleActive.contains(e.target)) {
+        bundlePopover.classList.add('hidden');
+      }
+      if (entryLangPopover && !entryLangPopover.contains(e.target) && btnEntryLangActive && !btnEntryLangActive.contains(e.target)) {
+        entryLangPopover.classList.add('hidden');
+      }
+    });
 
     const openModalBtn = document.getElementById('btn-new-bundle');
     const modal = document.getElementById('new-bundle-modal');
@@ -224,12 +385,11 @@ const BundlesController = {
         if (!this.activeBundle) return;
 
         const input = document.getElementById('entry-text-input');
-        const sourceSelect = document.getElementById('entry-source-lang');
         const statusEl = document.getElementById('entry-submit-status');
         const submitBtn = document.getElementById('btn-add-entry');
 
         const text = input ? input.value.trim() : '';
-        const sourceLang = sourceSelect ? sourceSelect.value : 'en';
+        const sourceLang = this.activeEntrySourceLang;
 
         if (!text) return;
 

@@ -20,9 +20,18 @@
   --arc-lightgreen: #4ADE80;
   --arc-lightblue: #38BDF8;
 
-  --foliage-deep: #15803D;
-  --foliage-mid: #22C55E;
-  --foliage-light: #86EFAC;
+  --rust-dark: #4A1909;
+  --rust-mid: #9A3412;
+  --rust-orange: #C2410C;
+
+  --foliage-root: #06170C;
+  --foliage-deep: #0D2B17;
+  --foliage-shadow: #14532D;
+  --foliage-mid: #16A34A;
+  --foliage-light: #22C55E;
+  --foliage-vivid: #4ADE80;
+  --foliage-accent: #86EFAC;
+  --foliage-spore: #BEF264;
 }
 
 body {
@@ -36,13 +45,42 @@ body {
   font-family: 'JetBrains Mono', monospace;
 }
 
+.chassis-weathered {
+  background-color: #0A0C0E;
+  background-image: 
+    radial-gradient(circle at 8% 8%, rgba(154, 52, 18, 0.08) 0%, transparent 35%),
+    radial-gradient(circle at 92% 8%, rgba(154, 52, 18, 0.07) 0%, transparent 30%),
+    radial-gradient(circle at 88% 88%, rgba(154, 52, 18, 0.08) 0%, transparent 35%),
+    radial-gradient(circle at 12% 90%, rgba(90, 32, 11, 0.09) 0%, transparent 30%);
+}
+
+.rust-seam-top {
+  position: relative;
+}
+
+.rust-seam-top::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: linear-gradient(180deg, rgba(154, 52, 18, 0.35) 0%, rgba(90, 32, 11, 0.15) 60%, transparent 100%);
+  pointer-events: none;
+  z-index: 25;
+}
+
+.rust-border {
+  border-color: #3D261C !important;
+}
+
 .chassis-screw {
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background: radial-gradient(circle, #2d313d 30%, #14171b 90%);
-  border: 1px solid #3d4353;
-  box-shadow: inset 1px 1px 1px rgba(255, 255, 255, 0.15), 1px 1px 2px rgba(0, 0, 0, 0.8);
+  background: radial-gradient(circle, #3D261C 20%, #1A1C23 60%, #0E0F12 95%);
+  border: 1px solid #5A2A1A;
+  box-shadow: inset 1px 1px 1px rgba(255, 255, 255, 0.1), 1px 1px 3px rgba(0, 0, 0, 0.9);
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -54,7 +92,7 @@ body {
   content: "";
   width: 7px;
   height: 1.5px;
-  background: #0e0f12;
+  background: #0E0F12;
   transform: rotate(45deg);
 }
 
@@ -63,27 +101,54 @@ body {
   position: absolute;
   width: 7px;
   height: 1.5px;
-  background: #0e0f12;
+  background: #0E0F12;
   transform: rotate(-45deg);
+}
+
+.rust-drip {
+  position: relative;
+}
+
+.rust-drip::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 12px;
+  background: linear-gradient(180deg, rgba(154, 52, 18, 0.7) 0%, rgba(90, 32, 11, 0.3) 60%, transparent 100%);
+  pointer-events: none;
+  z-index: 20;
 }
 
 .hazard-stripe {
   background: repeating-linear-gradient(
     -45deg,
-    #ff4d00,
-    #ff4d00 8px,
-    #1a1c23 8px,
-    #1a1c23 16px
+    #D94300,
+    #D94300 8px,
+    #14161B 8px,
+    #14161B 16px
   );
+  filter: contrast(1.15) brightness(0.88);
+  position: relative;
+}
+
+.hazard-stripe::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(140, 45, 12, 0.35) 0%, transparent 20%, rgba(90, 30, 10, 0.25) 50%, transparent 75%, rgba(140, 45, 12, 0.35) 100%);
+  pointer-events: none;
 }
 
 .hazard-stripe-muted {
   background: repeating-linear-gradient(
     -45deg,
-    #2d313d,
-    #2d313d 8px,
-    #1a1c23 8px,
-    #1a1c23 16px
+    #2D313D,
+    #2D313D 8px,
+    #1A1C23 8px,
+    #1A1C23 16px
   );
 }
 
@@ -146,9 +211,9 @@ body {
 
 .tactile-btn {
   position: relative;
-  background: linear-gradient(180deg, #262933 0%, #15171d 100%);
+  background: linear-gradient(180deg, #262933 0%, #15171D 100%);
   border: 1px solid var(--chassis-border);
-  border-bottom: 3px solid #0e0f12;
+  border-bottom: 3px solid #0E0F12;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 2px 4px rgba(0, 0, 0, 0.6);
   transition: all 0.08s ease-in-out;
   cursor: pointer;
@@ -156,7 +221,7 @@ body {
 }
 
 .tactile-btn:hover {
-  background: linear-gradient(180deg, #313644 0%, #1c1f27 100%);
+  background: linear-gradient(180deg, #313644 0%, #1C1F27 100%);
   border-color: var(--chassis-highlight);
 }
 
@@ -167,15 +232,15 @@ body {
 }
 
 .tactile-btn-hazard {
-  background: linear-gradient(180deg, #ff5714 0%, #cc3d00 100%);
-  border-color: #ff6b33;
+  background: linear-gradient(180deg, #FF5714 0%, #CC3D00 100%);
+  border-color: #FF6B33;
   border-bottom: 3px solid #802600;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 0 12px rgba(255, 77, 0, 0.45);
-  color: #fff;
+  color: #FFF;
 }
 
 .tactile-btn-hazard:hover {
-  background: linear-gradient(180deg, #ff6b33 0%, #e64500 100%);
+  background: linear-gradient(180deg, #FF6B33 0%, #E64500 100%);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 0 18px rgba(255, 77, 0, 0.65);
 }
 
@@ -185,9 +250,9 @@ body {
 }
 
 .tactile-chip {
-  background: #14171b;
+  background: #14171B;
   border: 1px solid var(--chassis-border);
-  color: #7b849b;
+  color: #7B849B;
   transition: all 0.12s ease-in-out;
 }
 
@@ -206,8 +271,8 @@ body {
 .frequency-tuner-box {
   background: #0E0F12;
   border: 1px solid var(--chassis-border);
-  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.8);
-  transition: border-color 0.15s ease-in-out;
+  box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.85);
+  transition: all 0.15s ease-in-out;
 }
 
 .frequency-tuner-box:hover {
@@ -221,16 +286,16 @@ body {
 }
 
 .frequency-item:hover {
-  background: rgba(255, 179, 0, 0.12);
+  background: rgba(255, 179, 0, 0.14);
   color: var(--arc-amber);
   border-color: var(--arc-amber);
 }
 
 .frequency-item.active {
-  background: rgba(255, 77, 0, 0.18);
+  background: rgba(255, 77, 0, 0.22);
   color: var(--arc-orange);
   border-color: var(--arc-orange);
-  box-shadow: inset 0 0 8px rgba(255, 77, 0, 0.25);
+  box-shadow: inset 0 0 8px rgba(255, 77, 0, 0.3);
 }
 
 .terminal-footer-bar {
@@ -241,13 +306,16 @@ body {
 .foliage-decal {
   position: absolute;
   pointer-events: none;
-  z-index: 30;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.7));
+  z-index: 35;
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.95)) drop-shadow(0 2px 6px rgba(6, 23, 12, 0.9));
 }
 
 .foliage-moss-deep { fill: var(--foliage-deep); }
+.foliage-moss-shadow { fill: var(--foliage-shadow); }
 .foliage-moss-mid { fill: var(--foliage-mid); }
 .foliage-moss-light { fill: var(--foliage-light); }
+.foliage-moss-accent { fill: var(--foliage-accent); }
+.foliage-moss-spore { fill: var(--foliage-spore); }
 
 ::-webkit-scrollbar {
   width: 6px;
