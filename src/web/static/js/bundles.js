@@ -84,7 +84,7 @@ const BundlesController = {
     if (this.bundles.length === 0) {
       container.innerHTML = `
         <div class="col-span-full p-6 text-center text-xs font-mono-code text-zinc-500 border border-dashed border-[#2B303C] rounded-lg">
-          [NO MAGNETIC DATA CASSETTES FOUND // INITIALIZE NEW PACK TO COMMENCE RECORDING]
+          No vocabulary packs found. Create a new pack to get started.
         </div>
       `;
       return;
@@ -93,7 +93,7 @@ const BundlesController = {
     this.bundles.forEach((b, idx) => {
       const padIndex = String(idx + 1).padStart(2, '0');
       const isActive = b.id === activeId;
-      const pairSummary = b.languages.map(l => l.toUpperCase()).join(' // ');
+      const pairSummary = b.languages.map(l => l.toUpperCase()).join(' • ');
 
       const cassette = document.createElement('div');
       cassette.className = `data-cassette p-3 flex flex-col justify-between ${isActive ? 'active' : ''}`;
@@ -106,10 +106,10 @@ const BundlesController = {
         <div class="flex items-center justify-between pb-1.5 mb-2 border-b border-[#222630] text-[10px] font-mono-code">
           <div class="flex items-center gap-1.5">
             <span class="chassis-screw" style="width: 8px; height: 8px;"></span>
-            <span class="text-arc-orange font-bold">[MC-60 // PACK-${padIndex}]</span>
+            <span class="text-arc-orange font-bold">[PACK ${padIndex}]</span>
           </div>
           <div class="flex items-center gap-1.5">
-            <span class="text-zinc-500 font-bold uppercase text-[9px]">${isActive ? 'ACTIVE' : 'STANDBY'}</span>
+            <span class="text-zinc-500 font-bold uppercase text-[9px]">${isActive ? 'SELECTED' : 'SELECT'}</span>
             <span class="led-indicator ${isActive ? 'led-amber' : 'bg-zinc-700'}"></span>
           </div>
         </div>
@@ -117,11 +117,11 @@ const BundlesController = {
         <div class="cassette-label-strip p-2 rounded mb-2.5 flex flex-col gap-0.5">
           <div class="flex items-center justify-between">
             <span class="font-mono-code font-bold text-xs tracking-wider truncate uppercase">${b.name}</span>
-            <span class="font-mono-code text-[10px] font-bold text-[#8A3008] flex-shrink-0 ml-2">[${b.item_count} ITEMS]</span>
+            <span class="font-mono-code text-[10px] font-bold text-[#8A3008] flex-shrink-0 ml-2">[${b.item_count} WORDS]</span>
           </div>
           <div class="flex items-center justify-between text-[10px] font-mono-code text-zinc-700">
             <span class="font-bold tracking-widest truncate">${pairSummary}</span>
-            <span class="text-[9px] uppercase tracking-wider flex-shrink-0 ml-2">TYPE-I</span>
+            <span class="text-[9px] uppercase tracking-wider flex-shrink-0 ml-2">VOCAB</span>
           </div>
         </div>
 
@@ -142,7 +142,7 @@ const BundlesController = {
         </div>
 
         <div class="flex items-center justify-between pt-2 mt-2 border-t border-[#1C1F27] text-[9px] font-mono-code text-zinc-500">
-          <span>SERIAL // SP-${padIndex}-${b.id.slice(0, 4)}</span>
+          <span>PACK-${padIndex}</span>
           <span class="chassis-screw" style="width: 8px; height: 8px;"></span>
         </div>
       `;
@@ -167,7 +167,7 @@ const BundlesController = {
       btn.innerHTML = `
         <div class="flex items-center gap-2 text-zinc-500">
           <span class="led-indicator bg-zinc-700"></span>
-          <span>[NO BUNDLES INITIALIZED]</span>
+          <span>No packs created</span>
         </div>
         <span class="text-zinc-600 text-[10px]">▾</span>
       `;
@@ -186,11 +186,11 @@ const BundlesController = {
       <div class="flex items-center gap-2 overflow-hidden text-ellipsis whitespace-nowrap min-w-0">
         <span class="led-indicator led-orange flex-shrink-0"></span>
         <span class="text-arc-orange font-mono-code font-bold tracking-wider flex-shrink-0">[ PACK-${padIndex} ]</span>
-        <span class="text-zinc-200 font-mono-code font-bold truncate">${current.name.toUpperCase()}</span>
-        <span class="text-[10px] font-mono-code text-zinc-500 flex-shrink-0">${langSummary}</span>
+        <span class="text-zinc-200 font-mono-code font-bold truncate">${current.name}</span>
+        <span class="text-[10px] font-mono-code text-zinc-400 flex-shrink-0">${langSummary}</span>
       </div>
       <div class="flex items-center gap-1.5 text-[10px] font-mono-code text-zinc-400 flex-shrink-0 ml-2">
-        <span class="text-zinc-400">[SELECT]</span>
+        <span class="text-zinc-400">SELECT</span>
         <span>▾</span>
       </div>
     `;
@@ -207,9 +207,9 @@ const BundlesController = {
       item.innerHTML = `
         <div class="flex items-center gap-2 truncate min-w-0">
           <span class="font-bold text-arc-orange flex-shrink-0">[ PACK-${pIndex} ]</span>
-          <span class="font-bold truncate">${b.name.toUpperCase()}</span>
-          <span class="text-[10px] text-zinc-500 flex-shrink-0">${bSummary}</span>
-          <span class="text-[10px] text-zinc-400 ml-1 flex-shrink-0">[${b.item_count} ITEMS]</span>
+          <span class="font-bold truncate text-[#EDE8D0]">${b.name}</span>
+          <span class="text-[10px] text-zinc-400 flex-shrink-0">${bSummary}</span>
+          <span class="text-[10px] text-zinc-500 ml-1 flex-shrink-0">[${b.item_count} words]</span>
         </div>
         <span class="led-indicator ${isActive ? 'led-orange' : 'bg-zinc-700'} flex-shrink-0 ml-2"></span>
       `;
@@ -252,7 +252,7 @@ const BundlesController = {
       btn.innerHTML = `
         <div class="flex items-center gap-1.5 text-zinc-500">
           <span class="led-indicator bg-zinc-700"></span>
-          <span>[NO FREQ]</span>
+          <span>[NO LANG]</span>
         </div>
         <span class="text-zinc-600 text-[10px]">▾</span>
       `;
@@ -261,34 +261,31 @@ const BundlesController = {
     }
 
     const currentLang = this.activeEntrySourceLang;
-    const currentMhz = this.getFrequency(currentLang);
     const currentLangObj = this.allLanguages.find(l => l.code === currentLang);
-    const currentLabel = currentLangObj ? `${currentLangObj.name.toUpperCase()} // ${currentLang.toUpperCase()}` : currentLang.toUpperCase();
+    const currentLabel = currentLangObj ? `${currentLangObj.name.toUpperCase()} [${currentLang.toUpperCase()}]` : currentLang.toUpperCase();
 
     btn.innerHTML = `
       <div class="flex items-center gap-2 truncate min-w-0">
         <span class="led-indicator led-amber flex-shrink-0"></span>
-        <span class="text-arc-amber font-mono-code font-bold tracking-wider flex-shrink-0">[ ${currentMhz} MHz ]</span>
-        <span class="text-zinc-200 font-mono-code font-bold truncate">${currentLabel}</span>
+        <span class="text-[#EDE8D0] font-mono-code font-bold truncate">${currentLabel}</span>
       </div>
       <div class="flex items-center gap-1 text-[10px] font-mono-code text-zinc-400 ml-1 flex-shrink-0">
-        <span class="hidden sm:inline">[TUNE]</span>
+        <span class="hidden sm:inline">CHANGE</span>
         <span>▾</span>
       </div>
     `;
 
     popover.innerHTML = '';
     for (const lang of this.activeBundle.languages) {
-      const mhz = this.getFrequency(lang);
       const isActive = lang === currentLang;
       const langObj = this.allLanguages.find(l => l.code === lang);
-      const label = langObj ? `${langObj.name.toUpperCase()} ${lang.toUpperCase()}` : lang.toUpperCase();
+      const label = langObj ? `${langObj.name.toUpperCase()}` : lang.toUpperCase();
       const item = document.createElement('div');
       item.className = `frequency-item p-2 rounded border border-[#2B303C] flex items-center justify-between text-xs font-mono-code mb-1 ${isActive ? 'active' : 'bg-[#0E0F12] text-zinc-300'}`;
       item.innerHTML = `
         <div class="flex items-center gap-2 truncate">
-          <span class="font-bold text-arc-amber">[ ${mhz} MHz ]</span>
-          <span class="truncate">${label}</span>
+          <span class="font-bold text-[#EDE8D0]">${label}</span>
+          <span class="text-[10px] text-zinc-400 font-bold">[${lang.toUpperCase()}]</span>
         </div>
         <span class="led-indicator ${isActive ? 'led-amber' : 'bg-zinc-700'} flex-shrink-0 ml-2"></span>
       `;
@@ -310,7 +307,7 @@ const BundlesController = {
     if (!container) return;
     container.innerHTML = `
       <div class="p-8 text-center text-xs font-mono-code text-zinc-500">
-        [NO VOCABULARY PACK DETECTED // INITIALIZE NEW PACK TO COMMENCE CIPHER ARCHIVE]
+        No vocabulary pack selected. Select or create a pack above.
       </div>
     `;
   },
@@ -323,12 +320,13 @@ const BundlesController = {
     const entries = this.activeBundle.entries || [];
 
     let ths = langs.map(l => {
-      const mhz = this.getFrequency(l);
+      const langObj = this.allLanguages.find(lang => lang.code === l);
+      const name = langObj ? langObj.name : l.toUpperCase();
       return `
-        <th class="px-3 py-2 text-left text-xs font-bold text-arc-amber font-mono-code tracking-wider border-b border-[#2B303C]">
+        <th class="px-3 py-2 text-left text-xs font-bold text-zinc-200 font-mono-code tracking-wider border-b border-[#2B303C]">
           <div class="flex items-center gap-1.5">
-            <span class="text-zinc-400 text-[10px]">[${mhz} MHz]</span>
-            <span>${l.toUpperCase()}</span>
+            <span>${name}</span>
+            <span class="text-zinc-400 text-[10px]">[${l.toUpperCase()}]</span>
           </div>
         </th>
       `;
@@ -340,7 +338,7 @@ const BundlesController = {
       rowsHtml = `
         <tr>
           <td colspan="${langs.length + 1}" class="px-4 py-8 text-center text-xs font-mono-code text-zinc-500">
-            [EMPTY ARCHIVE MATRIX // ADD PHRASE BELOW TO ENCODE]
+            This pack has no entries yet. Enter a word or phrase below to translate.
           </td>
         </tr>
       `;
@@ -353,8 +351,8 @@ const BundlesController = {
 
         tds += `
           <td class="px-3 py-2 text-right border-b border-[#1A1C23]">
-            <button type="button" class="del-entry-btn tactile-btn px-2 py-0.5 text-[10px] text-red-400 hover:text-red-300 rounded" data-entry-id="${entry.id}">
-              PURGE
+            <button type="button" class="del-entry-btn tactile-btn px-2.5 py-1 text-[11px] font-bold text-red-400 hover:text-red-300 rounded" data-entry-id="${entry.id}">
+              DELETE
             </button>
           </td>
         `;
@@ -382,13 +380,13 @@ const BundlesController = {
       btn.addEventListener('click', async () => {
         if (window.AudioEngine) AudioEngine.playMechanicalClick(true);
         const entryId = btn.dataset.entryId;
-        if (!confirm('CONFIRM DELETION OF ENCODED ENTRY?')) return;
+        if (!confirm('Delete this word from the pack?')) return;
         try {
           await API.deleteBundleEntry(this.activeBundle.id, entryId);
           await this.loadBundle(this.activeBundle.id);
           await this.loadBundles(this.activeBundle.id);
         } catch (e) {
-          alert(`PURGE FAILED: ${e.message}`);
+          alert(`Delete failed: ${e.message}`);
         }
       });
     });
@@ -455,7 +453,7 @@ const BundlesController = {
 
         const checkedLangs = Array.from(form.querySelectorAll('input[name="bundle_lang"]:checked')).map(cb => cb.value);
         if (checkedLangs.length < 2) {
-          alert('A MINIMUM OF 2 CIPHER FREQUENCIES MUST BE SELECTED');
+          alert('Please select at least 2 languages.');
           return;
         }
 
@@ -465,7 +463,7 @@ const BundlesController = {
           form.reset();
           await this.loadBundles(created.id);
         } catch (err) {
-          alert(`CREATION FAILED: ${err.message}`);
+          alert(`Failed to create pack: ${err.message}`);
         }
       });
     }
@@ -487,7 +485,7 @@ const BundlesController = {
         if (!text) return;
 
         if (statusEl) {
-          statusEl.textContent = 'DECRYPTING & DISTRIBUTING...';
+          statusEl.textContent = 'Translating and adding...';
           statusEl.classList.remove('hidden');
         }
         if (submitBtn) submitBtn.disabled = true;
@@ -498,13 +496,13 @@ const BundlesController = {
           await this.loadBundle(this.activeBundle.id);
           await this.loadBundles(this.activeBundle.id);
           if (statusEl) {
-            statusEl.textContent = 'ENTRY ENCODED';
+            statusEl.textContent = 'Entry added!';
             setTimeout(() => {
               statusEl.classList.add('hidden');
             }, 1500);
           }
         } catch (err) {
-          if (statusEl) statusEl.textContent = `ERR: ${err.message}`;
+          if (statusEl) statusEl.textContent = `Error: ${err.message}`;
         } finally {
           if (submitBtn) submitBtn.disabled = false;
         }

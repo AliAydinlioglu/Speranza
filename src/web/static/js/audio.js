@@ -41,7 +41,7 @@ const AudioEngine = {
     const label = document.getElementById('audio-label');
     const led = document.getElementById('audio-led');
     if (label) {
-      label.textContent = this.muted ? 'AUDIO COMM // [MUTED]' : 'AUDIO COMM // ACTIVE';
+      label.textContent = this.muted ? 'SOUND: OFF' : 'SOUND: ON';
       label.className = `text-xs font-mono-code font-bold tracking-wider ${this.muted ? 'text-zinc-500' : 'text-[#4ADE80]'}`;
     }
     if (led) {

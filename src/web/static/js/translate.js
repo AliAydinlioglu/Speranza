@@ -60,16 +60,15 @@ const TranslateController = {
       code: this.selectedSourceLang,
       name: this.selectedSourceLang.toUpperCase()
     };
-    const currentMhz = this.getFrequency(currentLang.code);
 
     displayBtn.innerHTML = `
       <div class="flex items-center gap-2">
         <span class="led-indicator led-amber"></span>
-        <span class="text-arc-amber font-mono-code font-bold tracking-wider">[ ${currentMhz} MHz ]</span>
-        <span class="text-zinc-200 font-mono-code">${currentLang.name.toUpperCase()} // ${currentLang.code.toUpperCase()}</span>
+        <span class="text-[#EDE8D0] font-mono-code font-bold tracking-wider">${currentLang.name.toUpperCase()}</span>
+        <span class="text-[11px] text-zinc-400 font-mono-code font-bold">[${currentLang.code.toUpperCase()}]</span>
       </div>
-      <div class="flex items-center gap-1.5 text-[10px] font-mono-code text-zinc-500">
-        <span class="text-zinc-400">[TUNE]</span>
+      <div class="flex items-center gap-1.5 text-[10px] font-mono-code text-zinc-400">
+        <span class="text-zinc-400">CHANGE</span>
         <span>▾</span>
       </div>
     `;
@@ -78,15 +77,13 @@ const TranslateController = {
     popover.innerHTML = '';
 
     for (const lang of sorted) {
-      const mhz = this.getFrequency(lang.code);
       const isActive = lang.code === this.selectedSourceLang;
       const item = document.createElement('div');
       item.className = `frequency-item p-2 rounded border border-[#2D313D] flex items-center justify-between text-xs font-mono-code mb-1 ${isActive ? 'active' : 'bg-[#0E0F12] text-zinc-300'}`;
       item.innerHTML = `
-        <div class="flex items-center gap-2.5">
-          <span class="font-bold text-arc-amber">[ ${mhz} MHz ]</span>
-          <span>${lang.name.toUpperCase()}</span>
-          <span class="text-[10px] opacity-60 font-bold">${lang.code.toUpperCase()}</span>
+        <div class="flex items-center gap-2">
+          <span class="font-bold text-[#EDE8D0]">${lang.name.toUpperCase()}</span>
+          <span class="text-[10px] text-zinc-400 font-bold">[${lang.code.toUpperCase()}]</span>
         </div>
         <span class="led-indicator ${isActive ? 'led-orange' : 'bg-zinc-700'}"></span>
       `;
@@ -146,7 +143,7 @@ const TranslateController = {
     if (input) {
       input.addEventListener('input', (e) => {
         const count = document.getElementById('carrier-char-count');
-        if (count) count.textContent = `${e.target.value.length} B`;
+        if (count) count.textContent = `${e.target.value.length} CHARS`;
         if (window.Oscilloscope) {
           Oscilloscope.triggerTyping();
         }
@@ -190,7 +187,7 @@ const TranslateController = {
       if (container) {
         container.innerHTML = `
           <div class="p-6 text-center text-xs font-mono-code text-zinc-500">
-            [STANDBY // AWAITING CARRIER FREQUENCY INGESTION]
+            Translations will appear here
           </div>
         `;
       }
@@ -203,7 +200,7 @@ const TranslateController = {
     if (targets.length === 0) return;
 
     if (statusText) {
-      statusText.textContent = 'SYNTHESIZING...';
+      statusText.textContent = 'TRANSLATING...';
       statusText.classList.add('text-arc-orange');
     }
     if (container) {
@@ -228,7 +225,7 @@ const TranslateController = {
       }
       this.renderOutputs(res.translations);
       if (statusText) {
-        statusText.textContent = 'PAYLOAD LOCKED';
+        statusText.textContent = 'READY';
         statusText.classList.remove('text-arc-orange');
       }
     } catch (err) {
@@ -250,14 +247,14 @@ const TranslateController = {
       }, 1800);
 
       if (statusText) {
-        statusText.textContent = 'SYNTHESIS ERR';
+        statusText.textContent = 'ERROR';
         statusText.classList.add('text-arc-orange');
       }
       if (container) {
         container.innerHTML = `
           <div class="p-4 text-xs font-mono-code text-red-500 border border-red-900 bg-red-950/30">
-            <div class="font-bold tracking-wider">[ERR_CARRIER_LOST // PAYLOAD DESYNCHRONIZED]</div>
-            <div class="mt-1 text-[11px] text-red-400/80">${err.message || 'TRANSMISSION_ABORTED'}</div>
+            <div class="font-bold tracking-wider">[TRANSLATION ERROR]</div>
+            <div class="mt-1 text-[11px] text-red-400/80">${err.message || 'Translation failed'}</div>
           </div>
         `;
       }
@@ -282,17 +279,16 @@ const TranslateController = {
       const card = document.createElement('div');
       card.className = 'crt-viewport p-4 mb-3 border border-zinc-800 rounded bg-[#070B08]';
       const langName = langMap[code] || code.toUpperCase();
-      const mhz = this.getFrequency(code);
 
       card.innerHTML = `
         <div class="flex items-center justify-between pb-2 mb-2 border-b border-zinc-800 text-[11px] font-mono-code">
           <div class="flex items-center gap-2">
             <span class="led-indicator led-green"></span>
-            <span class="text-arc-amber font-bold">[ ${mhz} MHz ]</span>
-            <span class="text-zinc-300 font-bold">${langName.toUpperCase()} // CH-[${code.toUpperCase()}]</span>
+            <span class="text-zinc-200 font-bold tracking-wide">${langName.toUpperCase()}</span>
+            <span class="text-[10px] text-zinc-400 font-bold">[${code.toUpperCase()}]</span>
           </div>
-          <button type="button" class="copy-btn tactile-btn px-2 py-0.5 text-[10px] text-zinc-300 rounded hover:text-white" data-text="${encodeURIComponent(text)}">
-            COPY PAYLOAD
+          <button type="button" class="copy-btn tactile-btn px-2.5 py-1 text-[11px] font-bold text-zinc-300 rounded hover:text-white" data-text="${encodeURIComponent(text)}">
+            COPY
           </button>
         </div>
         <div class="crt-content text-sm leading-relaxed font-mono-code select-all break-words">${text}</div>
@@ -303,10 +299,10 @@ const TranslateController = {
         if (window.AudioEngine) AudioEngine.playMechanicalClick(true);
         try {
           await navigator.clipboard.writeText(decodeURIComponent(copyBtn.dataset.text));
-          copyBtn.textContent = 'COPIED // OK';
+          copyBtn.textContent = 'COPIED!';
           copyBtn.classList.add('text-crt-green');
           setTimeout(() => {
-            copyBtn.textContent = 'COPY PAYLOAD';
+            copyBtn.textContent = 'COPY';
             copyBtn.classList.remove('text-crt-green');
           }, 1500);
         } catch (_) {}
