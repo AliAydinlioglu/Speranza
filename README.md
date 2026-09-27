@@ -1,7 +1,3 @@
-# Speranza
-
-A self-hosted, 100% offline multi-language translator and vocabulary management web application with a retro analog hardware interface.
-
 [![Podman](https://img.shields.io/badge/container-Rootless%20Podman-892CA0?logo=podman&logoColor=white)](https://podman.io/)
 [![Docker](https://img.shields.io/badge/docker-compatible-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
@@ -28,6 +24,7 @@ Unlike Google Translate, DeepL, or cloud translation services:
 If you open the app, you'll immediately notice it doesn't look like a standard modern SaaS tool.
 
 The interface is built as a love letter to **1970s and 1980s retro hardware and cassette-futurism** (inspired by retro sci-fi aesthetics and games like *ARC Raiders*). Instead of flat white cards and generic dropdowns, the UI feels like sitting in front of a weathered piece of analog equipment.
+
 ---
 
 ## What can you do with it?
