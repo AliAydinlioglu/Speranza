@@ -4,27 +4,6 @@ const BundlesController = {
   allLanguages: [],
   activeEntrySourceLang: 'en',
 
-  getFrequency(code) {
-    const table = {
-      en: '94.6',
-      nl: '104.2',
-      de: '89.8',
-      fr: '98.1',
-      es: '102.5',
-      it: '91.3',
-      pl: '106.7',
-      ru: '96.4',
-      zh: '107.9',
-      ar: '90.2'
-    };
-    if (table[code]) return table[code];
-    let sum = 0;
-    for (let i = 0; i < code.length; i++) {
-      sum += code.charCodeAt(i) * (i + 1);
-    }
-    return (88.0 + (sum % 190) * 0.1).toFixed(1);
-  },
-
   async init() {
     await this.loadAllLanguages();
     await this.loadBundles();

@@ -8,8 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/static/css/app.css">
-    <link rel="stylesheet" href="/static/css/crt.css">
+    <link rel="stylesheet" href="/static/css/app.css?v=20260927">
+    <link rel="stylesheet" href="/static/css/crt.css?v=20260927">
 </head>
 <body class="bg-[#0A0C0E] text-[#EDE8D0] min-h-screen p-2 md:p-8 flex flex-col justify-between relative overflow-x-hidden chassis-weathered">
     <div class="max-w-7xl mx-auto w-full relative">
@@ -1673,11 +1673,11 @@
         </div>
     </div>
 
-    <script src="/static/js/api.js"></script>
-    <script src="/static/js/audio.js"></script>
-    <script src="/static/js/oscilloscope.js"></script>
-    <script src="/static/js/translate.js"></script>
-    <script src="/static/js/bundles.js"></script>
+    <script src="/static/js/api.js?v=20260927"></script>
+    <script src="/static/js/audio.js?v=20260927"></script>
+    <script src="/static/js/oscilloscope.js?v=20260927"></script>
+    <script src="/static/js/translate.js?v=20260927"></script>
+    <script src="/static/js/bundles.js?v=20260927"></script>
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
             if (window.AudioEngine) {
@@ -1687,18 +1687,21 @@
             const btnAudioToggle = document.getElementById('btn-audio-toggle');
             if (btnAudioToggle && window.AudioEngine) {
                 btnAudioToggle.addEventListener('click', (e) => {
+                    e.preventDefault();
                     e.stopPropagation();
                     AudioEngine.toggleMute();
                 });
             }
 
             document.addEventListener('pointerdown', (e) => {
+                if (e.target.closest('#btn-audio-toggle')) return;
                 if (window.AudioEngine && e.target.closest('.tactile-btn, .tactile-chip, .frequency-item, .frequency-tuner-box, .data-cassette, button, [role="button"]')) {
                     AudioEngine.playMechanicalClick(true);
                 }
             });
 
             document.addEventListener('pointerup', (e) => {
+                if (e.target.closest('#btn-audio-toggle')) return;
                 if (window.AudioEngine && e.target.closest('.tactile-btn, .tactile-chip, .frequency-item, .frequency-tuner-box, .data-cassette, button, [role="button"]')) {
                     AudioEngine.playMechanicalClick(false);
                 }
