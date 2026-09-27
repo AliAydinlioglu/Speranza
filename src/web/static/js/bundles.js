@@ -1,3 +1,130 @@
+const ThemedModal = {
+  dialog: null,
+  titleEl: null,
+  messageEl: null,
+  confirmBtn: null,
+  cancelBtn: null,
+  closeBtn: null,
+  resolvePromise: null,
+
+  init() {
+    this.dialog = document.getElementById('themed-modal');
+    this.titleEl = document.getElementById('themed-modal-title');
+    this.messageEl = document.getElementById('themed-modal-message');
+    this.confirmBtn = document.getElementById('themed-modal-confirm');
+    this.cancelBtn = document.getElementById('themed-modal-cancel');
+    this.closeBtn = document.getElementById('themed-modal-x');
+
+    if (this.confirmBtn && !this.confirmBtn._bound) {
+      this.confirmBtn._bound = true;
+      this.confirmBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (typeof AudioEngine !== 'undefined') AudioEngine.playMechanicalClick(true);
+        this.close(true);
+      });
+    }
+
+    if (this.cancelBtn && !this.cancelBtn._bound) {
+      this.cancelBtn._bound = true;
+      this.cancelBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (typeof AudioEngine !== 'undefined') AudioEngine.playMechanicalClick(false);
+        this.close(false);
+      });
+    }
+
+    if (this.closeBtn && !this.closeBtn._bound) {
+      this.closeBtn._bound = true;
+      this.closeBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (typeof AudioEngine !== 'undefined') AudioEngine.playMechanicalClick(false);
+        this.close(false);
+      });
+    }
+
+    if (this.dialog && !this.dialog._bound) {
+      this.dialog._bound = true;
+      this.dialog.addEventListener('click', (e) => {
+        if (e.target === this.dialog) {
+          if (typeof AudioEngine !== 'undefined') AudioEngine.playMechanicalClick(false);
+          this.close(false);
+        }
+      });
+    }
+
+    if (!window._themedModalEscBound) {
+      window._themedModalEscBound = true;
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && this.dialog && !this.dialog.classList.contains('hidden')) {
+          if (typeof AudioEngine !== 'undefined') AudioEngine.playMechanicalClick(false);
+          this.close(false);
+        }
+      });
+    }
+  },
+
+  confirm(message, title = 'CONFIRM ACTION', options = {}) {
+    this.init();
+    return new Promise((resolve) => {
+      this.resolvePromise = resolve;
+      if (this.titleEl) this.titleEl.textContent = title;
+      if (this.messageEl) this.messageEl.textContent = message;
+      if (this.confirmBtn) {
+        this.confirmBtn.textContent = options.confirmText || 'CONFIRM';
+        if (options.isDanger) {
+          this.confirmBtn.className = 'tactile-btn px-5 py-2 text-xs font-mono-code font-bold tracking-wider rounded text-[#FF003C] border border-[#FF003C]/60 hover:bg-[#FF003C]/20 cursor-pointer';
+        } else {
+          this.confirmBtn.className = 'tactile-btn px-5 py-2 text-xs font-mono-code font-bold tracking-wider rounded text-[#FF4D00] border border-[#FF4D00]/60 hover:bg-[#FF4D00]/20 cursor-pointer';
+        }
+      }
+      if (this.cancelBtn) {
+        this.cancelBtn.classList.remove('hidden');
+        this.cancelBtn.textContent = options.cancelText || 'CANCEL';
+      }
+      if (this.dialog) {
+        this.dialog.classList.remove('hidden');
+        this.dialog.classList.add('flex');
+      }
+    });
+  },
+
+  alert(message, title = 'SYSTEM NOTICE') {
+    this.init();
+    return new Promise((resolve) => {
+      this.resolvePromise = resolve;
+      if (this.titleEl) this.titleEl.textContent = title;
+      if (this.messageEl) this.messageEl.textContent = message;
+      if (this.confirmBtn) {
+        this.confirmBtn.textContent = 'OK';
+        this.confirmBtn.className = 'tactile-btn px-5 py-2 text-xs font-mono-code font-bold tracking-wider rounded text-[#EDE8D0] border border-[#2B303C] hover:border-zinc-400 cursor-pointer';
+      }
+      if (this.cancelBtn) {
+        this.cancelBtn.classList.add('hidden');
+      }
+      if (this.dialog) {
+        this.dialog.classList.remove('hidden');
+        this.dialog.classList.add('flex');
+      }
+    });
+  },
+
+  close(result) {
+    if (this.dialog) {
+      this.dialog.classList.add('hidden');
+      this.dialog.classList.remove('flex');
+    }
+    if (this.resolvePromise) {
+      const res = this.resolvePromise;
+      this.resolvePromise = null;
+      res(result);
+    }
+  }
+};
+window.ThemedModal = ThemedModal;
+
 const BundlesController = {
   bundles: [],
   activeBundle: null,
@@ -40,7 +167,10 @@ const BundlesController = {
   async loadBundles(selectBundleId = null) {
     try {
       this.bundles = await API.getBundles();
-      const targetId = selectBundleId || (this.bundles[0] ? this.bundles[0].id : null);
+      let targetId = selectBundleId;
+      if (!targetId || !this.bundles.some(b => b.id === targetId)) {
+        targetId = this.bundles[0] ? this.bundles[0].id : null;
+      }
 
       this.renderCassettes(targetId);
       this.renderBundleSelector(targetId);
@@ -48,7 +178,9 @@ const BundlesController = {
       if (targetId) {
         await this.loadBundle(targetId);
       } else {
+        this.activeBundle = null;
         this.renderEmptyMatrix();
+        this.populateEntrySourceLangs();
       }
     } catch (e) {
       console.error(e);
@@ -122,16 +254,43 @@ const BundlesController = {
 
         <div class="flex items-center justify-between pt-2 mt-2 border-t border-[#1C1F27] text-[9px] font-mono-code text-zinc-500">
           <span>PACK-${padIndex}</span>
-          <span class="chassis-screw" style="width: 8px; height: 8px;"></span>
+          <button type="button" class="del-cassette-btn text-[9px] font-mono-code text-zinc-400 hover:text-[#FF003C] transition px-1.5 py-0.5 rounded border border-[#2B303C] hover:border-[#FF003C]/60 flex items-center gap-1 cursor-pointer" data-bundle-id="${b.id}" title="Delete pack">
+            <span>[DELETE PACK]</span>
+          </button>
         </div>
       `;
 
-      cassette.addEventListener('click', async () => {
-        if (window.AudioEngine) AudioEngine.playMechanicalClick(true);
+      cassette.addEventListener('click', async (e) => {
+        if (e.target.closest('.del-cassette-btn')) return;
+        if (typeof AudioEngine !== 'undefined') AudioEngine.playMechanicalClick(true);
         await this.loadBundle(b.id);
         this.renderBundleSelector(b.id);
         this.renderCassettes(b.id);
       });
+
+      const delBtn = cassette.querySelector('.del-cassette-btn');
+      if (delBtn) {
+        delBtn.addEventListener('click', async (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          if (typeof AudioEngine !== 'undefined') AudioEngine.playMechanicalClick(true);
+          const ok = await ThemedModal.confirm(
+            `Permanently delete vocabulary pack "${b.name}" and all its saved words?`,
+            'DELETE VOCABULARY PACK',
+            { isDanger: true, confirmText: 'DELETE PACK' }
+          );
+          if (!ok) return;
+
+          try {
+            await API.deleteBundle(b.id);
+            const remaining = this.bundles.filter(item => item.id !== b.id);
+            const nextId = remaining.length > 0 ? remaining[0].id : null;
+            await this.loadBundles(nextId);
+          } catch (err) {
+            await ThemedModal.alert(`Failed to delete pack: ${err.message}`, 'DELETE ERROR');
+          }
+        });
+      }
 
       container.appendChild(cassette);
     });
@@ -140,9 +299,11 @@ const BundlesController = {
   renderBundleSelector(activeId) {
     const btn = document.getElementById('btn-bundle-active');
     const popover = document.getElementById('bundle-select-popover');
+    const delActiveBtn = document.getElementById('btn-delete-active-bundle');
     if (!btn || !popover) return;
 
     if (this.bundles.length === 0) {
+      if (delActiveBtn) delActiveBtn.classList.add('hidden');
       btn.innerHTML = `
         <div class="flex items-center gap-2 text-zinc-500">
           <span class="led-indicator bg-zinc-700"></span>
@@ -155,6 +316,14 @@ const BundlesController = {
     }
 
     const current = this.bundles.find(b => b.id === activeId) || this.bundles[0];
+    if (delActiveBtn) {
+      if (current) {
+        delActiveBtn.classList.remove('hidden');
+      } else {
+        delActiveBtn.classList.add('hidden');
+      }
+    }
+
     const currentIndex = this.bundles.indexOf(current) + 1;
     const padIndex = String(currentIndex).padStart(2, '0');
     const langSummary = current.languages.length <= 3 
@@ -195,7 +364,7 @@ const BundlesController = {
 
       item.addEventListener('click', async (e) => {
         e.stopPropagation();
-        if (window.AudioEngine) AudioEngine.playMechanicalClick(true);
+        if (typeof AudioEngine !== 'undefined') AudioEngine.playMechanicalClick(true);
         popover.classList.add('hidden');
         await this.loadBundle(b.id);
         this.renderBundleSelector(b.id);
@@ -271,7 +440,7 @@ const BundlesController = {
 
       item.addEventListener('click', (e) => {
         e.stopPropagation();
-        if (window.AudioEngine) AudioEngine.playMechanicalClick(true);
+        if (typeof AudioEngine !== 'undefined') AudioEngine.playMechanicalClick(true);
         this.activeEntrySourceLang = lang;
         popover.classList.add('hidden');
         this.populateEntrySourceLangs();
@@ -330,7 +499,7 @@ const BundlesController = {
 
         tds += `
           <td class="px-3 py-2 text-right border-b border-[#1A1C23]">
-            <button type="button" class="del-entry-btn tactile-btn px-2.5 py-1 text-[11px] font-bold text-red-400 hover:text-red-300 rounded" data-entry-id="${entry.id}">
+            <button type="button" class="del-entry-btn tactile-btn px-2.5 py-1 text-[11px] font-bold text-red-400 hover:text-red-300 rounded cursor-pointer" data-entry-id="${entry.id}">
               DELETE
             </button>
           </td>
@@ -357,15 +526,22 @@ const BundlesController = {
 
     container.querySelectorAll('.del-entry-btn').forEach(btn => {
       btn.addEventListener('click', async () => {
-        if (window.AudioEngine) AudioEngine.playMechanicalClick(true);
+        if (typeof AudioEngine !== 'undefined') AudioEngine.playMechanicalClick(true);
         const entryId = btn.dataset.entryId;
-        if (!confirm('Delete this word from the pack?')) return;
+        if (!this.activeBundle || !this.activeBundle.id) return;
+        const ok = await ThemedModal.confirm(
+          'Delete this word from the pack?',
+          'DELETE ENTRY',
+          { isDanger: true, confirmText: 'DELETE' }
+        );
+        if (!ok) return;
+
         try {
           await API.deleteBundleEntry(this.activeBundle.id, entryId);
           await this.loadBundle(this.activeBundle.id);
           await this.loadBundles(this.activeBundle.id);
         } catch (e) {
-          alert(`Delete failed: ${e.message}`);
+          await ThemedModal.alert(`Delete failed: ${e.message}`, 'ERROR');
         }
       });
     });
@@ -378,8 +554,31 @@ const BundlesController = {
     if (btnBundleActive && bundlePopover) {
       btnBundleActive.addEventListener('click', (e) => {
         e.stopPropagation();
-        if (window.AudioEngine) AudioEngine.playMechanicalClick(true);
+        if (typeof AudioEngine !== 'undefined') AudioEngine.playMechanicalClick(true);
         bundlePopover.classList.toggle('hidden');
+      });
+    }
+
+    const btnDeleteActiveBundle = document.getElementById('btn-delete-active-bundle');
+    if (btnDeleteActiveBundle) {
+      btnDeleteActiveBundle.addEventListener('click', async () => {
+        if (!this.activeBundle) return;
+        if (typeof AudioEngine !== 'undefined') AudioEngine.playMechanicalClick(true);
+        const ok = await ThemedModal.confirm(
+          `Permanently delete vocabulary pack "${this.activeBundle.name}" and all its saved words?`,
+          'DELETE VOCABULARY PACK',
+          { isDanger: true, confirmText: 'DELETE PACK' }
+        );
+        if (!ok) return;
+
+        try {
+          await API.deleteBundle(this.activeBundle.id);
+          const remaining = this.bundles.filter(item => item.id !== this.activeBundle.id);
+          const nextId = remaining.length > 0 ? remaining[0].id : null;
+          await this.loadBundles(nextId);
+        } catch (err) {
+          await ThemedModal.alert(`Failed to delete pack: ${err.message}`, 'DELETE ERROR');
+        }
       });
     }
 
@@ -389,7 +588,7 @@ const BundlesController = {
     if (btnEntryLangActive && entryLangPopover) {
       btnEntryLangActive.addEventListener('click', (e) => {
         e.stopPropagation();
-        if (window.AudioEngine) AudioEngine.playMechanicalClick(true);
+        if (typeof AudioEngine !== 'undefined') AudioEngine.playMechanicalClick(true);
         entryLangPopover.classList.toggle('hidden');
       });
     }
@@ -409,14 +608,14 @@ const BundlesController = {
 
     if (openModalBtn && modal) {
       openModalBtn.addEventListener('click', () => {
-        if (window.AudioEngine) AudioEngine.playMechanicalClick(true);
+        if (typeof AudioEngine !== 'undefined') AudioEngine.playMechanicalClick(true);
         modal.classList.remove('hidden');
       });
     }
 
     if (closeModalBtn && modal) {
       closeModalBtn.addEventListener('click', () => {
-        if (window.AudioEngine) AudioEngine.playMechanicalClick(true);
+        if (typeof AudioEngine !== 'undefined') AudioEngine.playMechanicalClick(false);
         modal.classList.add('hidden');
       });
     }
@@ -425,14 +624,14 @@ const BundlesController = {
     if (form) {
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        if (window.AudioEngine) AudioEngine.playMechanicalClick(true);
+        if (typeof AudioEngine !== 'undefined') AudioEngine.playMechanicalClick(true);
         const nameInput = document.getElementById('new-bundle-name');
         const name = nameInput ? nameInput.value.trim() : '';
         if (!name) return;
 
         const checkedLangs = Array.from(form.querySelectorAll('input[name="bundle_lang"]:checked')).map(cb => cb.value);
         if (checkedLangs.length < 2) {
-          alert('Please select at least 2 languages.');
+          await ThemedModal.alert('Please select at least 2 languages.', 'VALIDATION NOTICE');
           return;
         }
 
@@ -442,7 +641,7 @@ const BundlesController = {
           form.reset();
           await this.loadBundles(created.id);
         } catch (err) {
-          alert(`Failed to create pack: ${err.message}`);
+          await ThemedModal.alert(`Failed to create pack: ${err.message}`, 'CREATION ERROR');
         }
       });
     }
@@ -452,7 +651,7 @@ const BundlesController = {
       addEntryForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         if (!this.activeBundle) return;
-        if (window.AudioEngine) AudioEngine.playMechanicalClick(true);
+        if (typeof AudioEngine !== 'undefined') AudioEngine.playMechanicalClick(true);
 
         const input = document.getElementById('entry-text-input');
         const statusEl = document.getElementById('entry-submit-status');
@@ -489,3 +688,4 @@ const BundlesController = {
     }
   },
 };
+window.BundlesController = BundlesController;

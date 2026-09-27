@@ -8,8 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/static/css/app.css?v=20260927">
-    <link rel="stylesheet" href="/static/css/crt.css?v=20260927">
+    <link rel="stylesheet" href="/static/css/app.css?v=20260927b">
+    <link rel="stylesheet" href="/static/css/crt.css?v=20260927b">
 </head>
 <body class="bg-[#0A0C0E] text-[#EDE8D0] min-h-screen p-2 md:p-8 flex flex-col justify-between relative overflow-x-hidden chassis-weathered">
     <div class="max-w-7xl mx-auto w-full relative">
@@ -664,23 +664,25 @@
                             <span id="carrier-char-count" class="text-[10px] font-mono-code telemetry-cyan font-bold">0 CHARS</span>
                         </div>
 
-                        <div class="crt-viewport crt-viewport-flush-bottom min-h-[170px] p-2 flex flex-col">
-                            <textarea id="carrier-input" placeholder="Type or paste text to translate..." class="w-full flex-1 bg-transparent text-[#33FF77] font-mono-code text-sm p-2 outline-none resize-none crt-content placeholder:text-zinc-600"></textarea>
-                            <div class="border-t border-[#14171b] pt-1 mt-1 relative h-12 flex items-center bg-[#070B08]/80">
-                                <canvas id="carrier-oscilloscope" class="w-full h-full block"></canvas>
-                                <span class="absolute right-2 top-0.5 text-[8px] font-mono-code text-[#33FF77]/40 pointer-events-none select-none">LIVE ACTIVITY</span>
+                        <div class="border-2 border-[#14171b] rounded-md overflow-hidden bg-[#070B08] flex flex-col">
+                            <div class="crt-viewport !border-0 !rounded-none min-h-[170px] p-2 flex flex-col">
+                                <textarea id="carrier-input" placeholder="Type or paste text to translate..." class="w-full flex-1 bg-transparent text-[#33FF77] font-mono-code text-sm p-2 outline-none resize-none crt-content placeholder:text-zinc-600"></textarea>
+                                <div class="border-t border-[#14171b] pt-1 mt-1 relative h-12 flex items-center bg-[#070B08]/80">
+                                    <canvas id="carrier-oscilloscope" class="w-full h-full block"></canvas>
+                                    <span class="absolute right-2 top-0.5 text-[8px] font-mono-code text-[#33FF77]/40 pointer-events-none select-none">LIVE ACTIVITY</span>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="terminal-footer-bar p-2.5 flex items-center justify-between border-2 border-t-0 border-[#101217] rounded-b-md">
-                            <div class="flex items-center gap-2 pl-1 text-[10px] font-mono-code text-zinc-400">
-                                <span class="led-indicator led-green"></span>
-                                <span class="telemetry-green font-bold">READY</span>
+                            <div class="terminal-footer-bar p-2.5 flex items-center justify-between !border-x-0 !border-b-0 !rounded-none">
+                                <div class="flex items-center gap-2 pl-1 text-[10px] font-mono-code text-zinc-400">
+                                    <span class="led-indicator led-green"></span>
+                                    <span class="telemetry-green font-bold">READY</span>
+                                </div>
+                                <button type="button" id="btn-decrypt-synthesize" class="tactile-btn tactile-btn-hazard py-2 px-4 rounded font-mono-code font-bold text-xs tracking-wider flex items-center gap-2">
+                                    <span class="led-indicator led-green"></span>
+                                    <span>TRANSLATE</span>
+                                </button>
                             </div>
-                            <button type="button" id="btn-decrypt-synthesize" class="tactile-btn tactile-btn-hazard py-2 px-4 rounded font-mono-code font-bold text-xs tracking-wider flex items-center gap-2">
-                                <span class="led-indicator led-green"></span>
-                                <span>TRANSLATE</span>
-                            </button>
                         </div>
                     </div>
 
@@ -734,9 +736,14 @@
                         </div>
                     </div>
 
-                    <button type="button" id="btn-new-bundle" class="tactile-btn px-4 py-2 text-xs font-mono-code font-bold text-[#FFB300] border-[#FFB300]/40 rounded hover:border-[#FFB300]">
-                        + CREATE NEW PACK
-                    </button>
+                    <div class="flex items-center gap-2">
+                        <button type="button" id="btn-delete-active-bundle" class="tactile-btn px-3 py-2 text-xs font-mono-code font-bold text-[#FF003C] border-[#FF003C]/40 rounded hover:border-[#FF003C] hidden">
+                            DELETE PACK
+                        </button>
+                        <button type="button" id="btn-new-bundle" class="tactile-btn px-4 py-2 text-xs font-mono-code font-bold text-[#FFB300] border-[#FFB300]/40 rounded hover:border-[#FFB300]">
+                            + CREATE NEW PACK
+                        </button>
+                    </div>
                 </div>
 
                 <div class="bg-[#16181F] border border-[#2B303C] p-4 rounded-md shadow-md">
@@ -1673,36 +1680,69 @@
         </div>
     </div>
 
-    <script src="/static/js/api.js?v=20260927"></script>
-    <script src="/static/js/audio.js?v=20260927"></script>
-    <script src="/static/js/oscilloscope.js?v=20260927"></script>
-    <script src="/static/js/translate.js?v=20260927"></script>
-    <script src="/static/js/bundles.js?v=20260927"></script>
+    <div id="themed-modal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 items-center justify-center p-4 hidden">
+        <div class="bg-[#16181F] border-2 border-[#2B303C] rounded-lg max-w-md w-full p-5 sm:p-6 shadow-2xl relative rust-seam-top">
+            <div class="arc-spectrum-bar rounded-t-sm mb-3">
+                <span></span><span></span><span></span><span></span><span></span>
+            </div>
+            <div class="flex items-center justify-between pb-3 mb-4 border-b border-[#2B303C]">
+                <div class="flex items-center gap-2">
+                    <span class="chassis-screw"></span>
+                    <h3 id="themed-modal-title" class="text-xs font-bold font-mono-code tracking-wider text-[#FF4D00] uppercase">CONFIRM ACTION</h3>
+                </div>
+                <button type="button" id="themed-modal-x" class="text-zinc-500 hover:text-zinc-200 text-lg leading-none font-mono-code cursor-pointer">&times;</button>
+            </div>
+
+            <div class="mb-6">
+                <p id="themed-modal-message" class="text-xs sm:text-sm font-mono-code text-zinc-300 leading-relaxed break-words"></p>
+            </div>
+
+            <div class="flex items-center justify-end gap-3 pt-3 border-t border-[#2B303C]">
+                <button type="button" id="themed-modal-cancel" class="tactile-btn px-4 py-2 text-xs font-mono-code font-bold tracking-wider rounded text-zinc-400 border border-[#2B303C] hover:border-zinc-500">
+                    CANCEL
+                </button>
+                <button type="button" id="themed-modal-confirm" class="tactile-btn px-5 py-2 text-xs font-mono-code font-bold tracking-wider rounded text-[#FF003C] border border-[#FF003C]/60 hover:bg-[#FF003C]/20">
+                    CONFIRM
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/api.js?v=20260927c"></script>
+    <script src="/static/js/audio.js?v=20260927c"></script>
+    <script src="/static/js/oscilloscope.js?v=20260927c"></script>
+    <script src="/static/js/translate.js?v=20260927c"></script>
+    <script src="/static/js/bundles.js?v=20260927c"></script>
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
-            if (window.AudioEngine) {
+            if (typeof AudioEngine !== 'undefined') {
                 AudioEngine.init();
+            }
+            if (typeof ThemedModal !== 'undefined') {
+                ThemedModal.init();
             }
 
             const btnAudioToggle = document.getElementById('btn-audio-toggle');
-            if (btnAudioToggle && window.AudioEngine) {
+            if (btnAudioToggle) {
                 btnAudioToggle.addEventListener('click', (e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    AudioEngine.toggleMute();
+                    if (typeof AudioEngine !== 'undefined') {
+                        AudioEngine.toggleMute();
+                    }
                 });
             }
 
             document.addEventListener('pointerdown', (e) => {
                 if (e.target.closest('#btn-audio-toggle')) return;
-                if (window.AudioEngine && e.target.closest('.tactile-btn, .tactile-chip, .frequency-item, .frequency-tuner-box, .data-cassette, button, [role="button"]')) {
+                if (typeof AudioEngine !== 'undefined' && e.target.closest('.tactile-btn, .tactile-chip, .frequency-item, .frequency-tuner-box, .data-cassette, button, [role="button"]')) {
                     AudioEngine.playMechanicalClick(true);
                 }
             });
 
             document.addEventListener('pointerup', (e) => {
                 if (e.target.closest('#btn-audio-toggle')) return;
-                if (window.AudioEngine && e.target.closest('.tactile-btn, .tactile-chip, .frequency-item, .frequency-tuner-box, .data-cassette, button, [role="button"]')) {
+                if (typeof AudioEngine !== 'undefined' && e.target.closest('.tactile-btn, .tactile-chip, .frequency-item, .frequency-tuner-box, .data-cassette, button, [role="button"]')) {
                     AudioEngine.playMechanicalClick(false);
                 }
             });

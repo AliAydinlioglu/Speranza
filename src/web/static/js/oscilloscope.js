@@ -117,3 +117,4 @@ const Oscilloscope = {
     this.animId = requestAnimationFrame(() => this.render());
   }
 };
+window.Oscilloscope = Oscilloscope;

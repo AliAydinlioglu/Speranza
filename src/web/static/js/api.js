@@ -86,4 +86,11 @@ const API = {
       method: 'DELETE',
     });
   },
+
+  async deleteBundle(id) {
+    return this.request(`/api/bundles/${encodeURIComponent(id)}`, {
+      method: 'DELETE',
+    });
+  },
 };
+window.API = API;

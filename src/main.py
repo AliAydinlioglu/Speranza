@@ -221,3 +221,23 @@ async def delete_bundle_entry(id: str, entry_id: str):
         )
 
     return {"status": "deleted", "id": entry_id}
+
+
+@app.delete("/api/bundles/{id}")
+async def delete_bundle(id: str):
+    bundle = repository.get_bundle(id)
+    if not bundle:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Bundle with id '{id}' not found",
+        )
+
+    deleted = repository.delete_bundle(id)
+    if not deleted:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Bundle with id '{id}' could not be deleted",
+        )
+
+    return {"status": "deleted", "id": id}
+

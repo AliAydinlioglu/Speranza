@@ -11,18 +11,25 @@ const AudioEngine = {
       this.muted = saved === 'true';
     }
     this.updateUI();
-    window.addEventListener('pointerdown', () => {
+
+    const unlock = () => {
       this.ensureContext();
-    }, { once: true });
-    window.addEventListener('keydown', () => {
-      this.ensureContext();
-    }, { once: true });
+      window.removeEventListener('pointerdown', unlock);
+      window.removeEventListener('keydown', unlock);
+      window.removeEventListener('click', unlock);
+    };
+
+    window.addEventListener('pointerdown', unlock);
+    window.addEventListener('keydown', unlock);
+    window.addEventListener('click', unlock);
   },
 
   ensureContext() {
-    if (!this.ctx && (window.AudioContext || window.webkitAudioContext)) {
+    if (!this.ctx) {
       const AudioCtx = window.AudioContext || window.webkitAudioContext;
-      this.ctx = new AudioCtx();
+      if (AudioCtx) {
+        this.ctx = new AudioCtx();
+      }
     }
     if (this.ctx && this.ctx.state === 'suspended') {
       this.ctx.resume();
@@ -32,15 +39,22 @@ const AudioEngine = {
 
   toggleMute() {
     this.ensureContext();
-    this.muted = !this.muted;
-    localStorage.setItem('speranza_audio_muted', String(this.muted));
-    if (this.muted) {
+    if (this.ctx && this.ctx.state === 'suspended') {
+      this.ctx.resume();
+    }
+
+    if (!this.muted) {
+      this.playPowerDownTone();
+      this.muted = true;
       if (this.squelchGain) {
         this.stopCarrierSquelch();
       }
     } else {
+      this.muted = false;
       this.playTestBeep();
     }
+
+    localStorage.setItem('speranza_audio_muted', String(this.muted));
     this.updateUI();
     return this.muted;
   },
@@ -50,17 +64,47 @@ const AudioEngine = {
     const led = document.getElementById('audio-led');
     if (label) {
       label.textContent = this.muted ? 'SOUND: OFF' : 'SOUND: ON';
-      label.className = `text-xs font-mono-code font-bold tracking-wider ${this.muted ? 'text-zinc-500' : 'text-[#4ADE80]'}`;
+      label.className = `text-xs font-mono-code font-bold tracking-wider ${this.muted ? 'text-[#FF003C]' : 'text-[#4ADE80]'}`;
     }
     if (led) {
-      led.className = `led-indicator ${this.muted ? 'bg-zinc-700' : 'led-green'}`;
+      led.className = `led-indicator ${this.muted ? 'led-red' : 'led-green'}`;
     }
+  },
+
+  playPowerDownTone() {
+    this.ensureContext();
+    if (!this.ctx) return;
+    if (this.ctx.state === 'suspended') {
+      this.ctx.resume();
+    }
+
+    try {
+      const t = this.ctx.currentTime;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(520, t);
+      osc.frequency.exponentialRampToValueAtTime(110, t + 0.12);
+
+      gain.gain.setValueAtTime(0.25, t);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.14);
+
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+
+      osc.start(t);
+      osc.stop(t + 0.15);
+    } catch (_) {}
   },
 
   playTestBeep() {
     if (this.muted) return;
     this.ensureContext();
     if (!this.ctx) return;
+    if (this.ctx.state === 'suspended') {
+      this.ctx.resume();
+    }
 
     try {
       const t = this.ctx.currentTime;
@@ -71,9 +115,9 @@ const AudioEngine = {
       osc.frequency.setValueAtTime(587.33, t);
       osc.frequency.setValueAtTime(880, t + 0.08);
 
-      gain.gain.setValueAtTime(0.25, t);
-      gain.gain.setValueAtTime(0.25, t + 0.08);
-      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.22);
+      gain.gain.setValueAtTime(0.28, t);
+      gain.gain.setValueAtTime(0.28, t + 0.08);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.22);
 
       osc.connect(gain);
       gain.connect(this.ctx.destination);
@@ -87,6 +131,9 @@ const AudioEngine = {
     if (this.muted) return;
     this.ensureContext();
     if (!this.ctx) return;
+    if (this.ctx.state === 'suspended') {
+      this.ctx.resume();
+    }
 
     try {
       const t = this.ctx.currentTime;
@@ -94,33 +141,42 @@ const AudioEngine = {
       const filter = this.ctx.createBiquadFilter();
       const gain = this.ctx.createGain();
 
-      osc.type = 'triangle';
-      filter.type = 'lowpass';
-
       if (pressed) {
-        osc.frequency.setValueAtTime(650, t);
-        osc.frequency.exponentialRampToValueAtTime(180, t + 0.04);
-        filter.frequency.setValueAtTime(2000, t);
-        filter.frequency.exponentialRampToValueAtTime(300, t + 0.04);
-        gain.gain.setValueAtTime(0.35, t);
-        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.045);
-        osc.connect(filter);
-        filter.connect(gain);
-        gain.connect(this.ctx.destination);
-        osc.start(t);
-        osc.stop(t + 0.05);
-      } else {
-        osc.frequency.setValueAtTime(450, t);
-        osc.frequency.exponentialRampToValueAtTime(220, t + 0.025);
+        osc.type = 'square';
+        filter.type = 'bandpass';
         filter.frequency.setValueAtTime(1400, t);
-        filter.frequency.exponentialRampToValueAtTime(350, t + 0.025);
-        gain.gain.setValueAtTime(0.2, t);
-        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.03);
+        filter.Q.setValueAtTime(2.5, t);
+
+        osc.frequency.setValueAtTime(1200, t);
+        osc.frequency.exponentialRampToValueAtTime(320, t + 0.024);
+
+        gain.gain.setValueAtTime(0.38, t);
+        gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.028);
+
         osc.connect(filter);
         filter.connect(gain);
         gain.connect(this.ctx.destination);
+
         osc.start(t);
-        osc.stop(t + 0.035);
+        osc.stop(t + 0.03);
+      } else {
+        osc.type = 'triangle';
+        filter.type = 'bandpass';
+        filter.frequency.setValueAtTime(950, t);
+        filter.Q.setValueAtTime(2.0, t);
+
+        osc.frequency.setValueAtTime(850, t);
+        osc.frequency.exponentialRampToValueAtTime(280, t + 0.016);
+
+        gain.gain.setValueAtTime(0.22, t);
+        gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.019);
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(t);
+        osc.stop(t + 0.02);
       }
     } catch (_) {}
   },
@@ -130,6 +186,9 @@ const AudioEngine = {
     this.ensureContext();
     if (!this.ctx) return;
     if (this.squelchGain) return;
+    if (this.ctx.state === 'suspended') {
+      this.ctx.resume();
+    }
 
     try {
       const t = this.ctx.currentTime;
@@ -208,6 +267,9 @@ const AudioEngine = {
     if (this.muted) return;
     this.ensureContext();
     if (!this.ctx) return;
+    if (this.ctx.state === 'suspended') {
+      this.ctx.resume();
+    }
 
     try {
       const t = this.ctx.currentTime;
@@ -218,12 +280,12 @@ const AudioEngine = {
 
       osc1.type = 'sine';
       osc1.frequency.setValueAtTime(880, t);
-      gain1.gain.setValueAtTime(0.25, t);
+      gain1.gain.setValueAtTime(0.28, t);
       gain1.gain.exponentialRampToValueAtTime(0.0001, t + 0.22);
 
       osc2.type = 'sine';
       osc2.frequency.setValueAtTime(1318.5, t + 0.06);
-      gain2.gain.setValueAtTime(0.25, t + 0.06);
+      gain2.gain.setValueAtTime(0.28, t + 0.06);
       gain2.gain.exponentialRampToValueAtTime(0.0001, t + 0.32);
 
       osc1.connect(gain1);
@@ -242,6 +304,9 @@ const AudioEngine = {
     if (this.muted) return;
     this.ensureContext();
     if (!this.ctx) return;
+    if (this.ctx.state === 'suspended') {
+      this.ctx.resume();
+    }
 
     try {
       const t = this.ctx.currentTime;
@@ -263,7 +328,7 @@ const AudioEngine = {
 
       const gain = this.ctx.createGain();
       gain.gain.setValueAtTime(0.3, t);
-      gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + dur);
 
       noise.connect(filter);
       filter.connect(gain);
@@ -273,3 +338,4 @@ const AudioEngine = {
     } catch (_) {}
   }
 };
+window.AudioEngine = AudioEngine;

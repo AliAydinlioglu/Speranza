@@ -209,6 +209,11 @@ body {
   box-shadow: 0 0 6px var(--arc-amber), 0 0 8px rgba(255, 179, 0, 0.5);
 }
 
+.led-red {
+  background-color: #FF003C;
+  box-shadow: 0 0 6px #FF003C, 0 0 10px rgba(255, 0, 60, 0.7);
+}
+
 .tactile-btn {
   position: relative;
   background: linear-gradient(180deg, #262933 0%, #15171D 100%);
@@ -300,7 +305,7 @@ body {
 
 .terminal-footer-bar {
   background: #14171B;
-  border-top: 1px solid var(--chassis-border);
+  border-top: 1px solid #14171b;
 }
 
 .foliage-decal {

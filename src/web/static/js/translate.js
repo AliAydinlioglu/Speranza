@@ -281,3 +281,4 @@ const TranslateController = {
     }
   },
 };
+window.TranslateController = TranslateController;
