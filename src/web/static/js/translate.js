@@ -93,6 +93,7 @@ const TranslateController = {
 
       item.addEventListener('click', (e) => {
         e.stopPropagation();
+        if (window.AudioEngine) AudioEngine.playMechanicalClick(true);
         this.selectedSourceLang = lang.code;
         popover.classList.add('hidden');
         this.renderFrequencySelector();
@@ -119,6 +120,7 @@ const TranslateController = {
       btn.innerHTML = `${lang.name} <span class="text-[10px] opacity-75">${lang.code}</span>`;
 
       btn.addEventListener('click', () => {
+        if (window.AudioEngine) AudioEngine.playMechanicalClick(true);
         if (this.selectedTargetLangs.has(lang.code)) {
           if (this.selectedTargetLangs.size > 1) {
             this.selectedTargetLangs.delete(lang.code);
@@ -145,6 +147,9 @@ const TranslateController = {
       input.addEventListener('input', (e) => {
         const count = document.getElementById('carrier-char-count');
         if (count) count.textContent = `${e.target.value.length} B`;
+        if (window.Oscilloscope) {
+          Oscilloscope.triggerTyping();
+        }
         clearTimeout(this.debounceTimer);
         this.debounceTimer = setTimeout(() => {
           this.triggerTranslation();
@@ -154,6 +159,7 @@ const TranslateController = {
 
     if (execBtn) {
       execBtn.addEventListener('click', () => {
+        if (window.AudioEngine) AudioEngine.playMechanicalClick(true);
         this.triggerTranslation(true);
       });
     }
@@ -161,6 +167,7 @@ const TranslateController = {
     if (freqDisplayBtn && popover) {
       freqDisplayBtn.addEventListener('click', (e) => {
         e.stopPropagation();
+        if (window.AudioEngine) AudioEngine.playMechanicalClick(true);
         popover.classList.toggle('hidden');
       });
 
@@ -188,6 +195,7 @@ const TranslateController = {
         `;
       }
       if (statusText) statusText.textContent = 'STANDBY';
+      if (window.Oscilloscope) Oscilloscope.setState('idle');
       return;
     }
 
@@ -202,22 +210,54 @@ const TranslateController = {
       container.classList.add('crt-distort-active');
     }
 
+    if (window.AudioEngine) {
+      AudioEngine.startCarrierSquelch();
+    }
+    if (window.Oscilloscope) {
+      Oscilloscope.setState('processing');
+    }
+
     try {
       const res = await API.translate(text, this.selectedSourceLang, targets);
+      if (window.AudioEngine) {
+        AudioEngine.stopCarrierSquelch();
+        AudioEngine.playPayloadChime();
+      }
+      if (window.Oscilloscope) {
+        Oscilloscope.setState('idle');
+      }
       this.renderOutputs(res.translations);
       if (statusText) {
         statusText.textContent = 'PAYLOAD LOCKED';
         statusText.classList.remove('text-arc-orange');
       }
     } catch (err) {
+      if (window.AudioEngine) {
+        AudioEngine.stopCarrierSquelch();
+        AudioEngine.playGlitchStatic();
+      }
+      if (window.Oscilloscope) {
+        Oscilloscope.setState('corrupted');
+      }
+
+      const viewports = document.querySelectorAll('.crt-viewport');
+      viewports.forEach(vp => vp.classList.add('signal-corrupted'));
+      setTimeout(() => {
+        viewports.forEach(vp => vp.classList.remove('signal-corrupted'));
+        if (window.Oscilloscope && Oscilloscope.state === 'corrupted') {
+          Oscilloscope.setState('idle');
+        }
+      }, 1800);
+
       if (statusText) {
         statusText.textContent = 'SYNTHESIS ERR';
         statusText.classList.add('text-arc-orange');
       }
       if (container) {
         container.innerHTML = `
-          <div class="p-4 text-xs font-mono-code text-red-500 border border-red-900 bg-red-950/20">
-            SYNTHESIS FAILED: ${err.message}
+          <div class="p-4 text-xs font-mono-code text-red-500 border border-red-900 bg-red-950/30">
+            <div class="font-bold tracking-wider">[ERR_CARRIER_LOST // PAYLOAD DESYNCHRONIZED]</div>
+            <div class="mt-1 text-[11px] text-red-400/80">${err.message || 'TRANSMISSION_ABORTED'}</div>
           </div>
         `;
       }
@@ -260,6 +300,7 @@ const TranslateController = {
 
       const copyBtn = card.querySelector('.copy-btn');
       copyBtn.addEventListener('click', async () => {
+        if (window.AudioEngine) AudioEngine.playMechanicalClick(true);
         try {
           await navigator.clipboard.writeText(decodeURIComponent(copyBtn.dataset.text));
           copyBtn.textContent = 'COPIED // OK';

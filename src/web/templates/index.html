@@ -64,6 +64,12 @@
                         <span class="telemetry-cyan font-bold">CLOCK: 24.180 MHZ</span>
                         <span class="text-[#C2410C] text-[9px] uppercase tracking-wider font-bold">PATINA: HEAVY OXIDATION</span>
                     </div>
+
+                    <button type="button" id="btn-audio-toggle" class="tactile-btn flex items-center gap-2 bg-[#101217] border border-[#2B303C] px-3 py-1.5 rounded cursor-pointer">
+                        <span id="audio-led" class="led-indicator led-green"></span>
+                        <span id="audio-label" class="text-xs font-mono-code font-bold tracking-wider text-[#4ADE80]">AUDIO COMM // ACTIVE</span>
+                    </button>
+
                     <div class="flex items-center gap-2 bg-[#101217] border border-[#2B303C] px-3 py-1.5 rounded">
                         <span class="led-indicator led-green led-green-pulse"></span>
                         <span class="text-xs font-mono-code font-bold text-[#4ADE80] tracking-wider">CARRIER LOCK: SOLID</span>
@@ -137,8 +143,12 @@
                             <span id="carrier-char-count" class="text-[10px] font-mono-code telemetry-cyan font-bold">0 B</span>
                         </div>
 
-                        <div class="crt-viewport crt-viewport-flush-bottom min-h-[200px] p-2 flex flex-col">
+                        <div class="crt-viewport crt-viewport-flush-bottom min-h-[170px] p-2 flex flex-col">
                             <textarea id="carrier-input" placeholder="INPUT TACTICAL TRANSMISSION..." class="w-full flex-1 bg-transparent text-[#33FF77] font-mono-code text-sm p-2 outline-none resize-none crt-content placeholder:text-zinc-700"></textarea>
+                            <div class="border-t border-[#14171b] pt-1 mt-1 relative h-12 flex items-center bg-[#070B08]/80">
+                                <canvas id="carrier-oscilloscope" class="w-full h-full block"></canvas>
+                                <span class="absolute right-2 top-0.5 text-[8px] font-mono-code text-[#33FF77]/40 pointer-events-none select-none">OSC-800 // PHOSPHOR TRACE</span>
+                            </div>
                         </div>
 
                         <div class="terminal-footer-bar p-2.5 flex items-center justify-between border-2 border-t-0 border-[#101217] rounded-b-md">
@@ -215,6 +225,18 @@
                 </div>
 
                 <div class="bg-[#16181F] border border-[#2B303C] p-4 rounded-md shadow-md">
+                    <div class="flex items-center justify-between pb-2 mb-3 border-b border-[#2B303C]">
+                        <div class="flex items-center gap-2">
+                            <span class="chassis-screw"></span>
+                            <h2 class="text-xs font-bold tracking-widest text-[#FFB300] uppercase font-mono-code">DATA CASSETTE STORAGE BAY // MAGNETIC CIPHER ARCHIVES</h2>
+                        </div>
+                        <span class="text-[10px] font-mono-code telemetry-cyan font-bold">[MC-60 TAPE DECK]</span>
+                    </div>
+                    <div id="bundle-cassettes-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    </div>
+                </div>
+
+                <div class="bg-[#16181F] border border-[#2B303C] p-4 rounded-md shadow-md">
                     <form id="add-entry-form" class="flex flex-wrap items-center gap-3">
                         <div class="w-48 sm:w-52">
                             <label class="block text-[10px] font-mono-code text-zinc-500 mb-1">SOURCE FREQ</label>
@@ -275,6 +297,7 @@
             <path d="M35 128C50 118 64 126 74 145C64 152 48 158 35 160L35 128Z" fill="#22C55E"/>
             <circle cx="25" cy="125" r="4" fill="#86EFAC"/>
             <circle cx="45" cy="138" r="3.5" fill="#BEF264"/>
+            <circle cx="68" cy="145" r="3" fill="#86EFAC"/>
         </svg>
 
         <footer class="mt-4 flex flex-wrap items-center justify-between text-[11px] font-mono-code text-zinc-500 px-2 relative">
@@ -326,10 +349,36 @@
     </div>
 
     <script src="/static/js/api.js"></script>
+    <script src="/static/js/audio.js"></script>
+    <script src="/static/js/oscilloscope.js"></script>
     <script src="/static/js/translate.js"></script>
     <script src="/static/js/bundles.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
+            if (window.AudioEngine) {
+                AudioEngine.init();
+            }
+
+            const btnAudioToggle = document.getElementById('btn-audio-toggle');
+            if (btnAudioToggle && window.AudioEngine) {
+                btnAudioToggle.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    AudioEngine.toggleMute();
+                });
+            }
+
+            document.addEventListener('pointerdown', (e) => {
+                if (window.AudioEngine && e.target.closest('.tactile-btn, .tactile-chip, .frequency-item, .frequency-tuner-box, .data-cassette, button, [role="button"]')) {
+                    AudioEngine.playMechanicalClick(true);
+                }
+            });
+
+            document.addEventListener('pointerup', (e) => {
+                if (window.AudioEngine && e.target.closest('.tactile-btn, .tactile-chip, .frequency-item, .frequency-tuner-box, .data-cassette, button, [role="button"]')) {
+                    AudioEngine.playMechanicalClick(false);
+                }
+            });
+
             const btnModeLive = document.getElementById('btn-mode-live');
             const btnModeBundles = document.getElementById('btn-mode-bundles');
             const moduleLive = document.getElementById('module-live-comms');
@@ -352,6 +401,10 @@
                 moduleBundles.classList.remove('hidden');
                 moduleLive.classList.add('hidden');
             });
+
+            if (window.Oscilloscope) {
+                Oscilloscope.init('carrier-oscilloscope');
+            }
 
             await TranslateController.init();
             await BundlesController.init();

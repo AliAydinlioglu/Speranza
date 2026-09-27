@@ -334,3 +334,132 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--arc-orange);
 }
+
+.data-cassette {
+  background: linear-gradient(145deg, #171920 0%, #0F1014 100%);
+  border: 2px solid #2B303C;
+  border-radius: 8px;
+  box-shadow: inset 1px 1px 2px rgba(255, 255, 255, 0.07), inset -1px -1px 3px rgba(0, 0, 0, 0.9), 0 4px 12px rgba(0, 0, 0, 0.5);
+  transition: all 0.15s ease-in-out;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  user-select: none;
+}
+
+.data-cassette:hover {
+  border-color: #3F4658;
+  transform: translateY(-2px);
+  box-shadow: inset 1px 1px 2px rgba(255, 255, 255, 0.12), inset -1px -1px 3px rgba(0, 0, 0, 0.9), 0 6px 16px rgba(0, 0, 0, 0.7);
+}
+
+.data-cassette.active {
+  border-color: var(--arc-amber);
+  box-shadow: inset 0 0 10px rgba(255, 179, 0, 0.15), 0 0 16px rgba(255, 179, 0, 0.25), 0 4px 12px rgba(0, 0, 0, 0.7);
+}
+
+.cassette-tab {
+  width: 14px;
+  height: 6px;
+  background: #0A0C0E;
+  border: 1px solid #2B303C;
+  border-top: none;
+  position: absolute;
+  top: 0;
+}
+
+.cassette-tab-left { left: 16px; border-radius: 0 0 2px 2px; }
+.cassette-tab-right { right: 16px; border-radius: 0 0 2px 2px; }
+
+.cassette-label-strip {
+  background: #E5DFCA;
+  color: #14171B;
+  box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.35);
+  position: relative;
+}
+
+.cassette-label-strip::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #D94300 0%, #FFB300 50%, #D94300 100%);
+  opacity: 0.8;
+}
+
+.cassette-window {
+  background: #07080B;
+  border: 1.5px solid #262933;
+  border-radius: 4px;
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.9);
+  position: relative;
+}
+
+.cassette-tape-spool {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 14px;
+  background: #1B1510;
+  border-radius: 2px;
+}
+
+.cassette-reel {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #ECEAE0;
+  border: 2px solid #5A6070;
+  box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.8), 0 1px 3px rgba(0, 0, 0, 0.6);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cassette-reel-hub {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #0E1014;
+  border: 1.5px solid #444B5B;
+  position: relative;
+}
+
+.cassette-reel-teeth {
+  position: absolute;
+  inset: 0;
+}
+
+.cassette-reel-teeth::before,
+.cassette-reel-teeth::after {
+  content: "";
+  position: absolute;
+  background: #8E96A8;
+}
+
+.cassette-reel-teeth::before {
+  top: -2px;
+  bottom: -2px;
+  left: calc(50% - 1px);
+  width: 2px;
+}
+
+.cassette-reel-teeth::after {
+  left: -2px;
+  right: -2px;
+  top: calc(50% - 1px);
+  height: 2px;
+}
+
+@keyframes cassette-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.cassette-reel-active {
+  animation: cassette-spin 3s linear infinite;
+}
+

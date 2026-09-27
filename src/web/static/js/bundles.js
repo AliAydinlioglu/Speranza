@@ -63,6 +63,7 @@ const BundlesController = {
       this.bundles = await API.getBundles();
       const targetId = selectBundleId || (this.bundles[0] ? this.bundles[0].id : null);
 
+      this.renderCassettes(targetId);
       this.renderBundleSelector(targetId);
 
       if (targetId) {
@@ -73,6 +74,88 @@ const BundlesController = {
     } catch (e) {
       console.error(e);
     }
+  },
+
+  renderCassettes(activeId) {
+    const container = document.getElementById('bundle-cassettes-container');
+    if (!container) return;
+    container.innerHTML = '';
+
+    if (this.bundles.length === 0) {
+      container.innerHTML = `
+        <div class="col-span-full p-6 text-center text-xs font-mono-code text-zinc-500 border border-dashed border-[#2B303C] rounded-lg">
+          [NO MAGNETIC DATA CASSETTES FOUND // INITIALIZE NEW PACK TO COMMENCE RECORDING]
+        </div>
+      `;
+      return;
+    }
+
+    this.bundles.forEach((b, idx) => {
+      const padIndex = String(idx + 1).padStart(2, '0');
+      const isActive = b.id === activeId;
+      const pairSummary = b.languages.map(l => l.toUpperCase()).join(' // ');
+
+      const cassette = document.createElement('div');
+      cassette.className = `data-cassette p-3 flex flex-col justify-between ${isActive ? 'active' : ''}`;
+      cassette.dataset.bundleId = b.id;
+
+      cassette.innerHTML = `
+        <div class="cassette-tab cassette-tab-left"></div>
+        <div class="cassette-tab cassette-tab-right"></div>
+
+        <div class="flex items-center justify-between pb-1.5 mb-2 border-b border-[#222630] text-[10px] font-mono-code">
+          <div class="flex items-center gap-1.5">
+            <span class="chassis-screw" style="width: 8px; height: 8px;"></span>
+            <span class="text-arc-orange font-bold">[MC-60 // PACK-${padIndex}]</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span class="text-zinc-500 font-bold uppercase text-[9px]">${isActive ? 'ACTIVE' : 'STANDBY'}</span>
+            <span class="led-indicator ${isActive ? 'led-amber' : 'bg-zinc-700'}"></span>
+          </div>
+        </div>
+
+        <div class="cassette-label-strip p-2 rounded mb-2.5 flex flex-col gap-0.5">
+          <div class="flex items-center justify-between">
+            <span class="font-mono-code font-bold text-xs tracking-wider truncate uppercase">${b.name}</span>
+            <span class="font-mono-code text-[10px] font-bold text-[#8A3008] flex-shrink-0 ml-2">[${b.item_count} ITEMS]</span>
+          </div>
+          <div class="flex items-center justify-between text-[10px] font-mono-code text-zinc-700">
+            <span class="font-bold tracking-widest truncate">${pairSummary}</span>
+            <span class="text-[9px] uppercase tracking-wider flex-shrink-0 ml-2">TYPE-I</span>
+          </div>
+        </div>
+
+        <div class="cassette-window h-11 p-1.5 flex items-center justify-around relative">
+          <div class="cassette-tape-spool left-4 right-4"></div>
+          <div class="cassette-reel ${isActive ? 'cassette-reel-active' : ''} z-10">
+            <div class="cassette-reel-teeth"></div>
+            <div class="cassette-reel-hub"></div>
+          </div>
+          <div class="z-10 flex flex-col items-center">
+            <span class="text-[9px] font-mono-code text-zinc-500 font-bold tracking-widest">SIDE A</span>
+            <span class="text-[8px] font-mono-code text-zinc-600">4.75 CM/S</span>
+          </div>
+          <div class="cassette-reel ${isActive ? 'cassette-reel-active' : ''} z-10">
+            <div class="cassette-reel-teeth"></div>
+            <div class="cassette-reel-hub"></div>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between pt-2 mt-2 border-t border-[#1C1F27] text-[9px] font-mono-code text-zinc-500">
+          <span>SERIAL // SP-${padIndex}-${b.id.slice(0, 4)}</span>
+          <span class="chassis-screw" style="width: 8px; height: 8px;"></span>
+        </div>
+      `;
+
+      cassette.addEventListener('click', async () => {
+        if (window.AudioEngine) AudioEngine.playMechanicalClick(true);
+        await this.loadBundle(b.id);
+        this.renderBundleSelector(b.id);
+        this.renderCassettes(b.id);
+      });
+
+      container.appendChild(cassette);
+    });
   },
 
   renderBundleSelector(activeId) {
@@ -133,9 +216,11 @@ const BundlesController = {
 
       item.addEventListener('click', async (e) => {
         e.stopPropagation();
+        if (window.AudioEngine) AudioEngine.playMechanicalClick(true);
         popover.classList.add('hidden');
         await this.loadBundle(b.id);
         this.renderBundleSelector(b.id);
+        this.renderCassettes(b.id);
       });
 
       popover.appendChild(item);
@@ -210,6 +295,7 @@ const BundlesController = {
 
       item.addEventListener('click', (e) => {
         e.stopPropagation();
+        if (window.AudioEngine) AudioEngine.playMechanicalClick(true);
         this.activeEntrySourceLang = lang;
         popover.classList.add('hidden');
         this.populateEntrySourceLangs();
@@ -294,6 +380,7 @@ const BundlesController = {
 
     container.querySelectorAll('.del-entry-btn').forEach(btn => {
       btn.addEventListener('click', async () => {
+        if (window.AudioEngine) AudioEngine.playMechanicalClick(true);
         const entryId = btn.dataset.entryId;
         if (!confirm('CONFIRM DELETION OF ENCODED ENTRY?')) return;
         try {
@@ -314,6 +401,7 @@ const BundlesController = {
     if (btnBundleActive && bundlePopover) {
       btnBundleActive.addEventListener('click', (e) => {
         e.stopPropagation();
+        if (window.AudioEngine) AudioEngine.playMechanicalClick(true);
         bundlePopover.classList.toggle('hidden');
       });
     }
@@ -324,6 +412,7 @@ const BundlesController = {
     if (btnEntryLangActive && entryLangPopover) {
       btnEntryLangActive.addEventListener('click', (e) => {
         e.stopPropagation();
+        if (window.AudioEngine) AudioEngine.playMechanicalClick(true);
         entryLangPopover.classList.toggle('hidden');
       });
     }
@@ -343,12 +432,14 @@ const BundlesController = {
 
     if (openModalBtn && modal) {
       openModalBtn.addEventListener('click', () => {
+        if (window.AudioEngine) AudioEngine.playMechanicalClick(true);
         modal.classList.remove('hidden');
       });
     }
 
     if (closeModalBtn && modal) {
       closeModalBtn.addEventListener('click', () => {
+        if (window.AudioEngine) AudioEngine.playMechanicalClick(true);
         modal.classList.add('hidden');
       });
     }
@@ -357,6 +448,7 @@ const BundlesController = {
     if (form) {
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
+        if (window.AudioEngine) AudioEngine.playMechanicalClick(true);
         const nameInput = document.getElementById('new-bundle-name');
         const name = nameInput ? nameInput.value.trim() : '';
         if (!name) return;
@@ -383,6 +475,7 @@ const BundlesController = {
       addEntryForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         if (!this.activeBundle) return;
+        if (window.AudioEngine) AudioEngine.playMechanicalClick(true);
 
         const input = document.getElementById('entry-text-input');
         const statusEl = document.getElementById('entry-submit-status');

@@ -91,3 +91,49 @@
 .crt-distort-active {
   animation: chromatic-shift 0.12s infinite linear, crt-flicker 0.1s infinite;
 }
+
+@keyframes scanline-tearing {
+  0% {
+    clip-path: inset(0 0 0 0);
+    transform: translate(0, 0) skewX(0deg);
+  }
+  15% {
+    clip-path: inset(2% 0 1% 0);
+    transform: translate(-4px, 1px) skewX(-1.5deg);
+  }
+  30% {
+    clip-path: inset(0 0 0 0);
+    transform: translate(3px, -1px) skewX(1deg);
+  }
+  45% {
+    clip-path: inset(1% 0 3% 0);
+    transform: translate(-5px, 0) skewX(-2deg);
+  }
+  60% {
+    clip-path: inset(0 0 0 0);
+    transform: translate(4px, 1px) skewX(1.5deg);
+  }
+  75% {
+    clip-path: inset(3% 0 1% 0);
+    transform: translate(-2px, -1px) skewX(-1deg);
+  }
+  90% {
+    clip-path: inset(0 0 2% 0);
+    transform: translate(3px, 0) skewX(0.5deg);
+  }
+  100% {
+    clip-path: inset(0 0 0 0);
+    transform: translate(0, 0) skewX(0deg);
+  }
+}
+
+.signal-corrupted {
+  text-shadow: -3px 0 #FF003C, 3px 0 #00E6FF !important;
+  filter: contrast(180%) brightness(120%) hue-rotate(90deg);
+  animation: scanline-tearing 0.16s steps(2, end) infinite, crt-flicker 0.08s infinite !important;
+}
+
+.signal-corrupted * {
+  text-shadow: -3px 0 #FF003C, 3px 0 #00E6FF !important;
+}
+
