@@ -81,8 +81,7 @@ const ThemedModal = {
         }
       }
       if (this.cancelBtn) {
-        this.cancelBtn.classList.remove('hidden');
-        this.cancelBtn.textContent = options.cancelText || 'CANCEL';
+        this.cancelBtn.classList.add('hidden');
       }
       if (this.dialog) {
         this.dialog.classList.remove('hidden');

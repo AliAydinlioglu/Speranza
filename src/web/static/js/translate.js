@@ -194,7 +194,7 @@ const TranslateController = {
       }
       this.renderOutputs(res.translations);
       if (statusText) {
-        statusText.textContent = 'READY';
+        statusText.textContent = '[OUTPUT]';
         statusText.classList.remove('text-arc-orange');
       }
     } catch (err) {
