@@ -151,7 +151,9 @@ const BundlesController = {
     if (!container) return;
     container.innerHTML = '';
 
-    for (const lang of this.allLanguages) {
+    const sortedLangs = [...this.allLanguages].sort((a, b) => a.name.localeCompare(b.name));
+
+    for (const lang of sortedLangs) {
       const label = document.createElement('label');
       label.className = 'flex items-center gap-2 p-2 bg-[#12141a] border border-[#2B303C] rounded cursor-pointer hover:border-zinc-500 text-xs font-mono-code';
       
@@ -299,11 +301,9 @@ const BundlesController = {
   renderBundleSelector(activeId) {
     const btn = document.getElementById('btn-bundle-active');
     const popover = document.getElementById('bundle-select-popover');
-    const delActiveBtn = document.getElementById('btn-delete-active-bundle');
     if (!btn || !popover) return;
 
     if (this.bundles.length === 0) {
-      if (delActiveBtn) delActiveBtn.classList.add('hidden');
       btn.innerHTML = `
         <div class="flex items-center gap-2 text-zinc-500">
           <span class="led-indicator bg-zinc-700"></span>
@@ -316,13 +316,6 @@ const BundlesController = {
     }
 
     const current = this.bundles.find(b => b.id === activeId) || this.bundles[0];
-    if (delActiveBtn) {
-      if (current) {
-        delActiveBtn.classList.remove('hidden');
-      } else {
-        delActiveBtn.classList.add('hidden');
-      }
-    }
 
     const currentIndex = this.bundles.indexOf(current) + 1;
     const padIndex = String(currentIndex).padStart(2, '0');
@@ -556,29 +549,6 @@ const BundlesController = {
         e.stopPropagation();
         if (typeof AudioEngine !== 'undefined') AudioEngine.playMechanicalClick(true);
         bundlePopover.classList.toggle('hidden');
-      });
-    }
-
-    const btnDeleteActiveBundle = document.getElementById('btn-delete-active-bundle');
-    if (btnDeleteActiveBundle) {
-      btnDeleteActiveBundle.addEventListener('click', async () => {
-        if (!this.activeBundle) return;
-        if (typeof AudioEngine !== 'undefined') AudioEngine.playMechanicalClick(true);
-        const ok = await ThemedModal.confirm(
-          `Permanently delete vocabulary pack "${this.activeBundle.name}" and all its saved words?`,
-          'DELETE VOCABULARY PACK',
-          { isDanger: true, confirmText: 'DELETE PACK' }
-        );
-        if (!ok) return;
-
-        try {
-          await API.deleteBundle(this.activeBundle.id);
-          const remaining = this.bundles.filter(item => item.id !== this.activeBundle.id);
-          const nextId = remaining.length > 0 ? remaining[0].id : null;
-          await this.loadBundles(nextId);
-        } catch (err) {
-          await ThemedModal.alert(`Failed to delete pack: ${err.message}`, 'DELETE ERROR');
-        }
       });
     }
 

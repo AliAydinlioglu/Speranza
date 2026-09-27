@@ -322,22 +322,34 @@ body {
 .foliage-moss-accent { fill: var(--foliage-accent); }
 .foliage-moss-spore { fill: var(--foliage-spore); }
 
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #C44605 #0E1015;
 }
 
-::-webkit-scrollbar-track {
-  background: var(--crt-bg);
+::-webkit-scrollbar,
+*::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
 }
 
-::-webkit-scrollbar-thumb {
-  background: var(--chassis-border);
-  border-radius: 2px;
+::-webkit-scrollbar-track,
+*::-webkit-scrollbar-track {
+  background: #0E1015;
+  border-radius: 4px;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: var(--arc-orange);
+::-webkit-scrollbar-thumb,
+*::-webkit-scrollbar-thumb {
+  background: #C44605;
+  border-radius: 4px;
+  border: 1px solid #1E222B;
+}
+
+::-webkit-scrollbar-thumb:hover,
+*::-webkit-scrollbar-thumb:hover {
+  background: #FF4D00;
+  box-shadow: 0 0 6px rgba(255, 77, 0, 0.6);
 }
 
 .data-cassette {

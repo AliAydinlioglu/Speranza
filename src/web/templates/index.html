@@ -736,14 +736,9 @@
                         </div>
                     </div>
 
-                    <div class="flex items-center gap-2">
-                        <button type="button" id="btn-delete-active-bundle" class="tactile-btn px-3 py-2 text-xs font-mono-code font-bold text-[#FF003C] border-[#FF003C]/40 rounded hover:border-[#FF003C] hidden">
-                            DELETE PACK
-                        </button>
-                        <button type="button" id="btn-new-bundle" class="tactile-btn px-4 py-2 text-xs font-mono-code font-bold text-[#FFB300] border-[#FFB300]/40 rounded hover:border-[#FFB300]">
-                            + CREATE NEW PACK
-                        </button>
-                    </div>
+                    <button type="button" id="btn-new-bundle" class="tactile-btn px-4 py-2 text-xs font-mono-code font-bold text-[#FFB300] border-[#FFB300]/40 rounded hover:border-[#FFB300]">
+                        + CREATE NEW PACK
+                    </button>
                 </div>
 
                 <div class="bg-[#16181F] border border-[#2B303C] p-4 rounded-md shadow-md">
@@ -1647,28 +1642,28 @@
     </div>
 
     <div id="new-bundle-modal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-[#16181F] border-2 border-[#2B303C] rounded-lg max-w-lg w-full p-6 shadow-2xl relative">
-            <div class="flex items-center justify-between pb-3 mb-4 border-b border-[#2B303C]">
+        <div class="bg-[#16181F] border-2 border-[#2B303C] rounded-lg max-w-xl w-full p-5 sm:p-6 shadow-2xl relative max-h-[92vh] flex flex-col">
+            <div class="flex items-center justify-between pb-3 mb-4 border-b border-[#2B303C] flex-shrink-0">
                 <div class="flex items-center gap-2">
                     <span class="chassis-screw"></span>
                     <h3 class="text-sm font-bold font-mono-code tracking-wider text-[#FF4D00]">CREATE VOCABULARY PACK</h3>
                 </div>
-                <button type="button" id="btn-close-modal" class="text-zinc-500 hover:text-zinc-200 text-lg leading-none font-mono-code">&times;</button>
+                <button type="button" id="btn-close-modal" class="text-zinc-500 hover:text-zinc-200 text-lg leading-none font-mono-code cursor-pointer">&times;</button>
             </div>
 
-            <form id="new-bundle-form" class="flex flex-col gap-4">
-                <div>
+            <form id="new-bundle-form" class="flex flex-col gap-4 overflow-hidden flex-1">
+                <div class="flex-shrink-0">
                     <label class="block text-xs font-mono-code text-zinc-400 mb-1">PACK NAME</label>
                     <input type="text" id="new-bundle-name" placeholder="e.g. Travel Phrases, Work Terms" required class="w-full bg-[#0E0F12] border border-[#2B303C] text-[#EDE8D0] p-2 text-xs font-mono-code rounded focus:outline-none focus:border-[#FF4D00]">
                 </div>
 
-                <div>
-                    <label class="block text-xs font-mono-code text-zinc-400 mb-2">LANGUAGES (SELECT 2 OR MORE)</label>
-                    <div id="new-bundle-languages-container" class="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto p-1 border border-[#2B303C] bg-[#0E0F12] rounded">
+                <div class="flex flex-col flex-1 min-h-0">
+                    <label class="block text-xs font-mono-code text-zinc-400 mb-2 flex-shrink-0">LANGUAGES (SELECT 2 OR MORE)</label>
+                    <div id="new-bundle-languages-container" class="grid grid-cols-2 gap-2 max-h-[380px] sm:max-h-[420px] overflow-y-auto p-1.5 border border-[#2B303C] bg-[#0E0F12] rounded">
                     </div>
                 </div>
 
-                <div class="flex items-center justify-end gap-3 pt-3 border-t border-[#2B303C]">
+                <div class="flex items-center justify-end gap-3 pt-3 border-t border-[#2B303C] flex-shrink-0">
                     <button type="button" onclick="document.getElementById('new-bundle-modal').classList.add('hidden')" class="tactile-btn px-4 py-2 text-xs font-mono-code text-zinc-400 rounded">
                         CANCEL
                     </button>
@@ -1708,11 +1703,11 @@
         </div>
     </div>
 
-    <script src="/static/js/api.js?v=20260927c"></script>
-    <script src="/static/js/audio.js?v=20260927c"></script>
-    <script src="/static/js/oscilloscope.js?v=20260927c"></script>
-    <script src="/static/js/translate.js?v=20260927c"></script>
-    <script src="/static/js/bundles.js?v=20260927c"></script>
+    <script src="/static/js/api.js?v=20260927d"></script>
+    <script src="/static/js/audio.js?v=20260927d"></script>
+    <script src="/static/js/oscilloscope.js?v=20260927d"></script>
+    <script src="/static/js/translate.js?v=20260927d"></script>
+    <script src="/static/js/bundles.js?v=20260927d"></script>
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
             if (typeof AudioEngine !== 'undefined') {
