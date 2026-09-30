@@ -47,7 +47,7 @@ body {
 
 .chassis-weathered {
   background-color: #0A0C0E;
-  background-image: 
+  background-image:
     radial-gradient(circle at 8% 8%, rgba(154, 52, 18, 0.08) 0%, transparent 35%),
     radial-gradient(circle at 92% 8%, rgba(154, 52, 18, 0.07) 0%, transparent 30%),
     radial-gradient(circle at 88% 88%, rgba(154, 52, 18, 0.08) 0%, transparent 35%),
@@ -123,13 +123,11 @@ body {
 }
 
 .hazard-stripe {
-  background: repeating-linear-gradient(
-    -45deg,
-    #D94300,
-    #D94300 8px,
-    #14161B 8px,
-    #14161B 16px
-  );
+  background: repeating-linear-gradient(-45deg,
+      #D94300,
+      #D94300 8px,
+      #14161B 8px,
+      #14161B 16px);
   filter: contrast(1.15) brightness(0.88);
   position: relative;
 }
@@ -143,13 +141,11 @@ body {
 }
 
 .hazard-stripe-muted {
-  background: repeating-linear-gradient(
-    -45deg,
-    #2D313D,
-    #2D313D 8px,
-    #1A1C23 8px,
-    #1A1C23 16px
-  );
+  background: repeating-linear-gradient(-45deg,
+      #2D313D,
+      #2D313D 8px,
+      #1A1C23 8px,
+      #1A1C23 16px);
 }
 
 .arc-spectrum-bar {
@@ -159,17 +155,50 @@ body {
   overflow: hidden;
 }
 
-.arc-spectrum-bar span:nth-child(1) { background-color: var(--arc-red); flex: 1; }
-.arc-spectrum-bar span:nth-child(2) { background-color: var(--arc-orange); flex: 1; }
-.arc-spectrum-bar span:nth-child(3) { background-color: var(--arc-yellow); flex: 1; }
-.arc-spectrum-bar span:nth-child(4) { background-color: var(--arc-lightgreen); flex: 1; }
-.arc-spectrum-bar span:nth-child(5) { background-color: var(--arc-lightblue); flex: 1; }
+.arc-spectrum-bar span:nth-child(1) {
+  background-color: var(--arc-red);
+  flex: 1;
+}
 
-.telemetry-cyan { color: var(--arc-lightblue); }
-.telemetry-yellow { color: var(--arc-yellow); }
-.telemetry-green { color: var(--arc-lightgreen); }
-.telemetry-red { color: var(--arc-red); }
-.telemetry-orange { color: var(--arc-orange); }
+.arc-spectrum-bar span:nth-child(2) {
+  background-color: var(--arc-orange);
+  flex: 1;
+}
+
+.arc-spectrum-bar span:nth-child(3) {
+  background-color: var(--arc-yellow);
+  flex: 1;
+}
+
+.arc-spectrum-bar span:nth-child(4) {
+  background-color: var(--arc-lightgreen);
+  flex: 1;
+}
+
+.arc-spectrum-bar span:nth-child(5) {
+  background-color: var(--arc-lightblue);
+  flex: 1;
+}
+
+.telemetry-cyan {
+  color: var(--arc-lightblue);
+}
+
+.telemetry-yellow {
+  color: var(--arc-yellow);
+}
+
+.telemetry-green {
+  color: var(--arc-lightgreen);
+}
+
+.telemetry-red {
+  color: var(--arc-red);
+}
+
+.telemetry-orange {
+  color: var(--arc-orange);
+}
 
 .led-indicator {
   width: 8px;
@@ -189,10 +218,13 @@ body {
 }
 
 @keyframes led-pulse-anim {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 1;
     filter: brightness(1.2);
   }
+
   50% {
     opacity: 0.35;
     filter: brightness(0.6);
@@ -303,6 +335,33 @@ body {
   box-shadow: inset 0 0 8px rgba(255, 77, 0, 0.3);
 }
 
+#bundle-select-popover .frequency-item:hover {
+  background: rgba(255, 77, 0, 0.14);
+  color: var(--arc-orange);
+  border-color: var(--arc-orange);
+}
+
+#bundle-select-popover {
+  scrollbar-color: var(--arc-orange) #0E1015;
+}
+
+#bundle-select-popover::-webkit-scrollbar-thumb {
+  background: var(--arc-orange);
+}
+
+#bundle-select-popover::-webkit-scrollbar-thumb:hover {
+  background: #FF6B33;
+  box-shadow: 0 0 6px rgba(255, 77, 0, 0.6);
+}
+
+#frequency-tuner-popover .frequency-item.active,
+#entry-lang-popover .frequency-item.active {
+  background: rgba(255, 179, 0, 0.22);
+  color: var(--arc-amber);
+  border-color: var(--arc-amber);
+  box-shadow: inset 0 0 8px rgba(255, 179, 0, 0.3);
+}
+
 .terminal-footer-bar {
   background: #14171B;
   border-top: 1px solid #14171b;
@@ -315,16 +374,33 @@ body {
   filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.95)) drop-shadow(0 2px 6px rgba(6, 23, 12, 0.9));
 }
 
-.foliage-moss-deep { fill: var(--foliage-deep); }
-.foliage-moss-shadow { fill: var(--foliage-shadow); }
-.foliage-moss-mid { fill: var(--foliage-mid); }
-.foliage-moss-light { fill: var(--foliage-light); }
-.foliage-moss-accent { fill: var(--foliage-accent); }
-.foliage-moss-spore { fill: var(--foliage-spore); }
+.foliage-moss-deep {
+  fill: var(--foliage-deep);
+}
+
+.foliage-moss-shadow {
+  fill: var(--foliage-shadow);
+}
+
+.foliage-moss-mid {
+  fill: var(--foliage-mid);
+}
+
+.foliage-moss-light {
+  fill: var(--foliage-light);
+}
+
+.foliage-moss-accent {
+  fill: var(--foliage-accent);
+}
+
+.foliage-moss-spore {
+  fill: var(--foliage-spore);
+}
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: #C44605 #0E1015;
+  scrollbar-color: var(--arc-yellow) #0E1015;
 }
 
 ::-webkit-scrollbar,
@@ -341,15 +417,15 @@ body {
 
 ::-webkit-scrollbar-thumb,
 *::-webkit-scrollbar-thumb {
-  background: #C44605;
+  background: var(--arc-yellow);
   border-radius: 4px;
   border: 1px solid #1E222B;
 }
 
 ::-webkit-scrollbar-thumb:hover,
 *::-webkit-scrollbar-thumb:hover {
-  background: #FF4D00;
-  box-shadow: 0 0 6px rgba(255, 77, 0, 0.6);
+  background: #FDE047;
+  box-shadow: 0 0 6px rgba(250, 204, 21, 0.6);
 }
 
 .data-cassette {
@@ -365,7 +441,7 @@ body {
 }
 
 .data-cassette:hover {
-  border-color: #3F4658;
+  border-color: var(--arc-orange);
   transform: translateY(-2px);
   box-shadow: inset 1px 1px 2px rgba(255, 255, 255, 0.12), inset -1px -1px 3px rgba(0, 0, 0, 0.9), 0 6px 16px rgba(0, 0, 0, 0.7);
 }
@@ -373,6 +449,11 @@ body {
 .data-cassette.active {
   border-color: var(--arc-amber);
   box-shadow: inset 0 0 10px rgba(255, 179, 0, 0.15), 0 0 16px rgba(255, 179, 0, 0.25), 0 4px 12px rgba(0, 0, 0, 0.7);
+}
+
+.data-cassette.active:hover {
+  border-color: var(--arc-orange);
+  box-shadow: inset 0 0 10px rgba(255, 77, 0, 0.18), 0 0 16px rgba(255, 77, 0, 0.3), 0 6px 16px rgba(0, 0, 0, 0.7);
 }
 
 .cassette-tab {
@@ -385,8 +466,15 @@ body {
   top: 0;
 }
 
-.cassette-tab-left { left: 16px; border-radius: 0 0 2px 2px; }
-.cassette-tab-right { right: 16px; border-radius: 0 0 2px 2px; }
+.cassette-tab-left {
+  left: 16px;
+  border-radius: 0 0 2px 2px;
+}
+
+.cassette-tab-right {
+  right: 16px;
+  border-radius: 0 0 2px 2px;
+}
 
 .cassette-label-strip {
   background: #E5DFCA;
@@ -472,11 +560,15 @@ body {
 }
 
 @keyframes cassette-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .cassette-reel-active {
   animation: cassette-spin 3s linear infinite;
 }
-

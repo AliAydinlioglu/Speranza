@@ -1,0 +1,30 @@
+{
+  // ---------------------------------------------------------------------------
+  // This project has NO local Python environment. By design.
+  //
+  // Every runtime dependency (fastapi, uvicorn, pydantic, jinja2, aiofiles and
+  // the full argostranslate -> stanza -> torch/CUDA stack) lives ONLY inside
+  // the container image built from ./Containerfile + ./requirements.txt.
+  //
+  // Pylance analyses this workspace with the interpreter that ships with the
+  // editor runtime, which has none of those packages, so it reports
+  // "Import ... could not be resolved" for every third-party import.
+  // That is expected and is not a code defect - the container resolves them
+  // normally at runtime.
+  //
+  // TRADE-OFF: "reportMissingImports" is disabled for the whole workspace, so a
+  // typo in a *first-party* import (e.g. "from src.storage import repositor")
+  // will no longer be flagged either. All other diagnostics remain active.
+  //
+  // For real type information and go-to-definition on these packages, the only
+  // options are (a) attach the editor to the container via a .devcontainer
+  // setup, or (b) temporarily create a local venv with
+  // `python3 -m venv .venv && .venv/bin/pip install -r requirements.txt`
+  // and select it as the interpreter. Both are opt-in; this file assumes
+  // neither, so no local environment is required to work on this project.
+  // ---------------------------------------------------------------------------
+  "python.analysis.diagnosticSeverityOverrides": {
+    "reportMissingImports": "none"
+  },
+  "python.defaultInterpreterPath": "/usr/bin/python"
+}

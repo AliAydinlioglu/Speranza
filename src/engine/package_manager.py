@@ -29,11 +29,13 @@ def _sync_update_package_index() -> list:
         argostranslate.package.update_package_index()
     except Exception:
         pass
+    packages: list = []
     try:
-        _available_packages_cache = argostranslate.package.get_available_packages()
+        packages = argostranslate.package.get_available_packages()
     except Exception:
-        _available_packages_cache = []
-    return _available_packages_cache
+        packages = []
+    _available_packages_cache = packages
+    return packages
 
 
 def _sync_get_available_packages(force_update: bool = False) -> list:
