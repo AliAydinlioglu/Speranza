@@ -19,20 +19,12 @@ Unlike Google Translate, DeepL, or cloud translation services:
 
 ---
 
-## UI & Design Context
-
-If you open the app, you'll immediately notice it doesn't look like a standard modern SaaS tool.
-
-The interface is built as a love letter to **1970s and 1980s retro hardware and cassette-futurism** (inspired by retro sci-fi aesthetics and games like *ARC Raiders*). Instead of flat white cards and generic dropdowns, the UI feels like sitting in front of a weathered piece of analog equipment.
-
----
-
 ## What can you do with it?
 
 ### 1. Multi-Target Live Translation
 Type or paste text into the input terminal and select multiple destination languages (e.g., Dutch, Spanish, German, French). Speranza translates into all selected languages simultaneously in real time.
 
-### 2. Vocabulary Packs (Bundle Matrix)
+### 2. Vocabulary Packs
 Create custom vocabulary lists (like travel phrases, gaming callouts, or study decks) containing multiple languages:
 - When you add a new word or sentence in *any* of the pack's languages, Speranza automatically translates it and fills in the rest of the matrix.
 - You can review all translations side-by-side in a clean table and delete entries whenever needed.
