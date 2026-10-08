@@ -19,16 +19,40 @@ Unlike Google Translate, DeepL, or cloud translation services:
 
 ---
 
+## UI & Design Context
+
+The interface is built as a love letter to **1970s and 1980s retro hardware and cassette-futurism** (inspired by retro sci-fi aesthetics and games like *ARC Raiders*).
+
+![Speranza Interface Overview](docs/screenshots/01-live-translation.png)
+
+---
+
 ## What can you do with it?
 
 ### 1. Multi-Target Live Translation
-Type or paste text into the input terminal and select multiple destination languages (e.g., Dutch, Spanish, German, French). Speranza translates into all selected languages simultaneously in real time.
+Type or paste text into the input terminal and select multiple destination languages (e.g., Dutch, Spanish, German, Turkish, French). Speranza translates into all selected languages simultaneously in real time.
+
+<p align="center">
+  <img src="docs/screenshots/02-source-language-tuner.png" alt="Frequency Tuner Language Selection" width="100%" />
+</p>
 
 ### 2. Vocabulary Packs
-Create custom vocabulary lists (like travel phrases, gaming callouts, or study decks) containing multiple languages:
-- When you add a new word or sentence in *any* of the pack's languages, Speranza automatically translates it and fills in the rest of the matrix.
-- You can review all translations side-by-side in a clean table and delete entries whenever needed.
-- Each pack is saved to an internal SQLite database and represented visually as a cassette tape.
+Create custom vocabulary lists such as travel phrases or study decks containing multiple languages.
+
+<p align="center">
+  <img src="docs/screenshots/03-vocabulary-packs.png" alt="Analog Cassette Tape Decks" width="100%" />
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/04-vocabulary-matrix.png" alt="Vocabulary Matrix Table" width="100%" />
+</p>
+
+### 3. Pack Creation & Custom Language Sets
+Define custom packs configured with any combination of installed language models:
+
+<p align="center">
+  <img src="docs/screenshots/05-create-pack-modal.png" alt="Create Vocabulary Pack Dialog" width="100%" />
+</p>
 
 ---
 
