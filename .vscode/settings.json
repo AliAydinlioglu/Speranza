@@ -26,5 +26,9 @@
   "python.analysis.diagnosticSeverityOverrides": {
     "reportMissingImports": "none"
   },
+  "python.analysis.extraPaths": [
+    "./backend",
+    "."
+  ],
   "python.defaultInterpreterPath": "/usr/bin/python"
 }

@@ -13,7 +13,8 @@ services:
     volumes:
       - translator_db:/app/data
       - translator_models:/home/appuser/.local/share/argos-translate
-      - ./src:/app/src:ro,z
+      - ./backend:/app/backend:ro,z
+      - ./frontend:/app/frontend:ro,z
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:8000/health || exit 1"]

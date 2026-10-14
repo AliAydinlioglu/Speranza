@@ -243,10 +243,6 @@ const BundlesController = {
             <div class="cassette-reel-teeth"></div>
             <div class="cassette-reel-hub"></div>
           </div>
-          <div class="z-10 flex flex-col items-center">
-            <span class="text-[9px] font-mono-code text-zinc-500 font-bold tracking-widest">SIDE A</span>
-            <span class="text-[8px] font-mono-code text-zinc-600">4.75 CM/S</span>
-          </div>
           <div class="cassette-reel ${isActive ? 'cassette-reel-active' : ''} z-10">
             <div class="cassette-reel-teeth"></div>
             <div class="cassette-reel-hub"></div>

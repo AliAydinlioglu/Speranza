@@ -92,5 +92,19 @@ const API = {
       method: 'DELETE',
     });
   },
+
+  async getGdprPolicy() {
+    return this.request('/api/gdpr/policy');
+  },
+
+  async exportGdprData() {
+    return this.request('/api/gdpr/export');
+  },
+
+  async eraseGdprData() {
+    return this.request('/api/gdpr/erase', {
+      method: 'POST',
+    });
+  },
 };
 window.API = API;

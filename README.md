@@ -122,6 +122,72 @@ Everything you create is saved across container restarts using two named volumes
 
 ---
 
+---
+
+## Repository Structure
+
+Speranza is structured into clear, decoupled backend and frontend domains:
+
+```text
+Speranza/
+├── backend/
+│   ├── app/
+│   │   ├── api/
+│   │   │   ├── router.py             # Main API router blueprint
+│   │   │   └── routes/
+│   │   │       ├── health.py         # System health endpoint
+│   │   │       ├── languages.py      # Language model discovery & installation
+│   │   │       ├── translate.py      # Real-time multi-target translation
+│   │   │       ├── bundles.py        # Vocabulary pack CRUD & matrix
+│   │   │       └── gdpr.py           # GDPR export, purge, & privacy policy
+│   │   ├── core/
+│   │   │   ├── config.py             # Settings & filesystem paths
+│   │   │   └── models.py             # Pydantic data schemas
+│   │   ├── engine/
+│   │   │   ├── package_manager.py    # Argos package index & installation
+│   │   │   └── translator.py         # Non-blocking neural translation & English pivot
+│   │   ├── services/
+│   │   │   └── gdpr_service.py       # GDPR export & erasure services
+│   │   ├── storage/
+│   │   │   ├── database.py           # SQLite connection with WAL mode
+│   │   │   └── repository.py         # SQL CRUD repository & vacuum operations
+│   │   └── main.py                   # FastAPI application initialization & lifespan
+│   ├── tests/                        # Comprehensive test suite
+│   └── requirements.txt              # Pinned backend dependencies
+├── frontend/
+│   ├── static/
+│   │   ├── css/
+│   │   │   ├── app.css               # Chassis styling & retro tokens
+│   │   │   └── crt.css               # CRT scanlines & phosphor effects
+│   │   ├── js/
+│   │   │   ├── api.js                # Frontend API fetch client
+│   │   │   ├── audio.js              # Web Audio mechanical synthesizer
+│   │   │   ├── bundles.js            # Cassette deck matrix controller
+│   │   │   ├── gdpr.js               # GDPR privacy, export & erasure controller
+│   │   │   ├── oscilloscope.js       # Real-time CRT audio visualizer
+│   │   │   └── translate.js          # Live translation controller
+│   │   └── img/                      # SVG artwork and foliage overlays
+│   └── templates/
+│       └── index.html                # Terminal user interface
+├── compose.yaml                      # Rootless container orchestration
+├── Containerfile                     # OCI container build specification
+└── requirements.txt                  # Compatibility requirements reference
+```
+
+---
+
+## GDPR & Privacy by Design
+
+Speranza strictly adheres to the EU General Data Protection Regulation (GDPR) 2016/679:
+
+- **100% Offline Processing (Art. 25 Privacy by Design):** All neural translations run locally on your CPU. No translation text, metadata, or telemetry is ever sent over the network or logged to external servers.
+- **Data Minimization (Art. 5(1)(c)):** Live translation inputs are strictly ephemeral and processed in-memory only.
+- **Right to Data Portability (Art. 20):** Download a complete, machine-readable JSON archive of all your saved packs, phrases, and translations via `GET /api/gdpr/export` or the in-app "EXPORT DATA (JSON)" button.
+- **Right to Erasure (Art. 17 "Right to be Forgotten"):** Permanently erase all stored vocabulary packs and zero out the SQLite database via `POST /api/gdpr/erase` or the in-app "PURGE ALL DATA" button.
+- **Zero Tracking / Zero Cookies:** No tracking cookies, advertising beacons, or third-party analytics are used.
+
+---
+
 ## Tech Stack
 
 - **Backend**: Python 3.11, [FastAPI](https://fastapi.tiangolo.com/), Uvicorn (running under a non-root `appuser`).
@@ -138,6 +204,11 @@ In addition to the web UI, Speranza exposes a clean REST API under `/api`:
 
 ### System
 - `GET /health` — Check if the service is up.
+
+### GDPR & Privacy
+- `GET /api/gdpr/policy` — Retrieve the privacy statement and data rights declaration.
+- `GET /api/gdpr/export` — Export all user data (bundles, entries, translations) in portable JSON format (GDPR Art. 20).
+- `POST /api/gdpr/erase` — Permanently purge all user data from database and vacuum disk space (GDPR Art. 17).
 
 ### Languages
 - `GET /api/languages` — List available languages and check whether their model packages are downloaded.
@@ -158,7 +229,6 @@ In addition to the web UI, Speranza exposes a clean REST API under `/api`:
   Response:
   ```json
   {
-    "source_lang": "en",
     "translations": {
       "nl": "Vergadering op het ontmoetingspunt.",
       "de": "Treffen am Treffpunkt.",
@@ -185,9 +255,11 @@ In addition to the web UI, Speranza exposes a clean REST API under `/api`:
   }
   ```
 - `DELETE /api/bundles/{id}/entries/{entry_id}` — Delete an entry.
+- `DELETE /api/bundles/{id}` — Delete an entire pack.
 
 ---
 
 ## License
 
 MIT License. See [LICENSE](LICENSE) for details.
+
