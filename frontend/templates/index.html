@@ -12,7 +12,7 @@
     href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="/static/css/theme.css?v=20261015g">
-  <link rel="stylesheet" href="/static/css/app.css?v=20261015m">
+  <link rel="stylesheet" href="/static/css/app.css?v=20261015n">
   <link rel="stylesheet" href="/static/css/crt.css?v=20261015f">
 </head>
 
@@ -36,15 +36,15 @@
 
         <div class="flex items-center gap-3">
           <button type="button" id="btn-audio-toggle"
-            class="btn flex items-center gap-2 bg-panel border border-theme px-3 py-1.5 rounded cursor-pointer">
+            class="btn flex items-center gap-1.5 sm:gap-2 bg-panel border border-theme px-2 py-1 sm:px-3 sm:py-1.5 rounded cursor-pointer">
             <span id="audio-led" class="led-indicator led-green"></span>
-            <span id="audio-label" class="text-xs font-mono-code font-bold tracking-wider text-success">SOUND:
+            <span id="audio-label" class="text-[10px] sm:text-xs font-mono-code font-bold tracking-wider text-success">SOUND:
               ON</span>
           </button>
 
-          <div class="flex items-center gap-2 bg-panel border border-theme px-3 py-1.5 rounded">
+          <div class="flex items-center gap-1.5 sm:gap-2 bg-panel border border-theme px-2 py-1 sm:px-3 sm:py-1.5 rounded">
             <span class="led-indicator led-green led-green-pulse"></span>
-            <span class="text-xs font-mono-code font-bold text-success tracking-wider">ONLINE</span>
+            <span class="text-[10px] sm:text-xs font-mono-code font-bold text-success tracking-wider">ONLINE</span>
           </div>
           <span class="hardware-screw"></span>
         </div>
@@ -53,13 +53,13 @@
       <div class="accent-stripe h-2 w-full rounded-sm mb-3"></div>
 
       <div class="flex flex-wrap items-center justify-between gap-2 border-t border-theme pt-3">
-        <nav class="flex items-center gap-2">
+        <nav class="flex items-center gap-1.5 sm:gap-2">
           <button type="button" id="btn-mode-live"
-            class="btn px-4 py-1.5 text-xs font-bold font-mono-code tracking-wider rounded text-primary border-primary">
+            class="btn px-2.5 py-1 sm:px-4 sm:py-1.5 text-[11px] sm:text-xs font-bold font-mono-code tracking-wider rounded text-primary border-primary">
             LIVE TRANSLATION
           </button>
           <button type="button" id="btn-mode-bundles"
-            class="btn px-4 py-1.5 text-xs font-bold font-mono-code tracking-wider rounded text-muted border-theme">
+            class="btn px-2.5 py-1 sm:px-4 sm:py-1.5 text-[11px] sm:text-xs font-bold font-mono-code tracking-wider rounded text-muted border-theme">
             VOCABULARY CASSETTES
           </button>
         </nav>
@@ -85,7 +85,7 @@
 
             <div class="relative">
               <button type="button" id="btn-freq-active"
-                class="dropdown-trigger w-full p-2.5 rounded text-xs font-mono-code flex items-center justify-between cursor-pointer">
+                class="dropdown-trigger w-full p-2 sm:p-2.5 rounded text-xs font-mono-code flex items-center justify-between cursor-pointer">
                 <div class="flex items-center gap-2">
                   <span class="led-indicator led-amber"></span>
                   <span class="text-main font-mono-code font-bold tracking-wider">ENGLISH</span>
@@ -98,7 +98,7 @@
               </button>
 
               <div id="frequency-tuner-popover"
-                class="hidden absolute top-full left-0 right-0 mt-1 bg-panel border-2 border-theme rounded shadow-2xl p-2 z-40 max-h-56 overflow-y-auto">
+                class="hidden absolute top-full left-0 right-0 mt-1 bg-panel border-2 border-theme rounded shadow-2xl p-2 z-40 max-h-40 sm:max-h-56 overflow-y-auto">
               </div>
             </div>
           </div>
@@ -113,10 +113,10 @@
             </div>
 
             <div class="border-2 border-subtle rounded-md overflow-hidden bg-terminal flex flex-col">
-              <div class="crt-viewport !border-0 !rounded-none min-h-[170px] p-2 flex flex-col">
+              <div class="crt-viewport !border-0 !rounded-none min-h-[125px] sm:min-h-[170px] p-2 flex flex-col">
                 <textarea id="carrier-input" placeholder="Type or paste text to translate..."
                   class="w-full flex-1 bg-transparent text-terminal font-mono-code text-sm p-2 outline-none resize-none crt-content"></textarea>
-                <div class="border-t border-subtle pt-1 mt-1 relative h-12 flex items-center bg-terminal/80">
+                <div class="border-t border-subtle pt-1 mt-1 relative h-10 sm:h-12 flex items-center bg-terminal/80">
                   <canvas id="carrier-oscilloscope" class="w-full h-full block"></canvas>
                   <span
                     class="absolute right-2 top-0.5 text-[8px] font-mono-code text-terminal/40 pointer-events-none select-none">LIVE
@@ -125,13 +125,13 @@
               </div>
 
               <div
-                class="terminal-footer-bar p-2.5 flex items-center justify-between !border-x-0 !border-b-0 !rounded-none">
+                class="terminal-footer-bar p-2 sm:p-2.5 flex items-center justify-between !border-x-0 !border-b-0 !rounded-none">
                 <div class="flex items-center gap-2 pl-1 text-[10px] font-mono-code text-zinc-400">
                   <span class="led-indicator led-green"></span>
                   <span class="text-success font-bold">READY</span>
                 </div>
                 <button type="button" id="btn-decrypt-synthesize"
-                  class="btn btn-action py-2 px-4 rounded font-mono-code font-bold text-xs tracking-wider flex items-center gap-2">
+                  class="btn btn-action py-1.5 px-3 sm:py-2 sm:px-4 rounded font-mono-code font-bold text-[11px] sm:text-xs tracking-wider flex items-center gap-2">
                   <span class="led-indicator led-green"></span>
                   <span>TRANSLATE</span>
                 </button>
@@ -165,7 +165,7 @@
               </div>
             </div>
 
-            <div id="outputs-container" class="flex-1 overflow-y-auto max-h-[620px] pr-1">
+            <div id="outputs-container" class="flex-1 overflow-y-auto max-h-[340px] sm:max-h-[620px] pr-1">
               <div class="p-6 text-center text-xs font-mono-code text-zinc-500">
                 Translations will appear here
               </div>
@@ -181,16 +181,16 @@
               <span class="hardware-screw"></span>
               <h2 class="text-xs font-bold tracking-widest text-secondary uppercase font-mono-code">SAVED VOCABULARY CASSETTES</h2>
             </div>
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-1.5 sm:gap-2">
               <button type="button" id="btn-smart-bulk-generator"
-                class="btn px-3 py-1.5 text-xs font-mono-code font-bold text-secondary border-secondary/40 rounded hover:border-secondary cursor-pointer">
+                class="btn px-2 py-1 sm:px-3 sm:py-1.5 text-[11px] sm:text-xs font-mono-code font-bold text-secondary border-secondary/40 rounded hover:border-secondary cursor-pointer">
                 <span>Cassette Generator</span>
               </button>
               <button type="button" id="btn-new-bundle"
-                class="btn px-3 py-1.5 text-xs font-mono-code font-bold text-secondary border-secondary/40 rounded hover:border-secondary flex items-center gap-1.5 cursor-pointer"
+                class="btn px-2 py-1 sm:px-3 sm:py-1.5 text-[11px] sm:text-xs font-mono-code font-bold text-secondary border-secondary/40 rounded hover:border-secondary flex items-center gap-1 sm:gap-1.5 cursor-pointer"
                 title="Create New Pack">
                 <span class="text-sm font-bold leading-none">+</span>
-                <svg class="w-4.5 h-4 fill-none stroke-current" viewBox="0 0 24 20" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <svg class="w-4 h-3.5 sm:w-4.5 sm:h-4 fill-none stroke-current" viewBox="0 0 24 20" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
                   <rect x="1.5" y="1.5" width="21" height="17" rx="2" fill="currentColor" fill-opacity="0.1"></rect>
                   <path d="M5.5 18.5L7.5 14.5h9l2 4z" fill="currentColor" fill-opacity="0.15"></path>
                   <rect x="4.5" y="4" width="15" height="8.5" rx="1"></rect>
@@ -203,30 +203,30 @@
               </button>
             </div>
           </div>
-          <div id="bundle-cassettes-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div id="bundle-cassettes-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 max-h-[300px] sm:max-h-none overflow-y-auto sm:overflow-visible pr-1 sm:pr-0">
           </div>
         </div>
 
         <div class="bg-surface border border-theme p-4 rounded-md shadow-md">
-          <form id="add-entry-form" class="flex flex-wrap items-end gap-3">
-            <div class="w-48 sm:w-52">
+          <form id="add-entry-form" class="flex flex-wrap items-end gap-2.5 sm:gap-3">
+            <div class="w-full sm:w-52">
               <label class="block text-xs font-mono-code font-bold tracking-wider text-success mb-1">SOURCE LANGUAGE</label>
               <div class="relative">
                 <button type="button" id="btn-entry-lang-active"
-                  class="dropdown-trigger w-full p-2.5 rounded text-xs font-mono-code flex items-center justify-between cursor-pointer">
+                  class="dropdown-trigger w-full p-2 sm:p-2.5 rounded text-xs font-mono-code flex items-center justify-between cursor-pointer">
                 </button>
                 <div id="entry-lang-popover"
-                  class="hidden absolute bottom-full mb-1 left-0 w-56 bg-panel border-2 border-theme rounded shadow-2xl p-1.5 z-40 max-h-48 overflow-y-auto">
+                  class="hidden absolute bottom-full mb-1 left-0 w-full sm:w-56 bg-panel border-2 border-theme rounded shadow-2xl p-1.5 z-40 max-h-40 sm:max-h-48 overflow-y-auto">
                 </div>
               </div>
             </div>
-            <div class="flex-1 min-w-[240px]">
+            <div class="flex-1 min-w-[200px] sm:min-w-[240px]">
               <input type="text" id="entry-text-input" placeholder="Enter a word or phrase..."
-                class="w-full bg-input border border-theme text-main p-2.5 text-xs font-mono-code rounded focus:outline-none focus:border-primary">
+                class="w-full bg-input border border-theme text-main p-2 sm:p-2.5 text-xs font-mono-code rounded focus:outline-none focus:border-primary">
             </div>
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
               <button type="submit" id="btn-add-entry"
-                class="btn btn-action px-5 py-2.5 text-xs font-mono-code font-bold rounded">
+                class="btn btn-action w-full sm:w-auto px-3.5 py-1.5 sm:px-5 sm:py-2.5 text-xs font-mono-code font-bold rounded">
                 ADD &amp; TRANSLATE
               </button>
               <span id="entry-submit-status" class="text-xs font-mono-code text-primary hidden">Translating and
@@ -271,7 +271,7 @@
   <div id="new-bundle-modal"
     class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div
-      class="bg-surface border-2 border-theme rounded-lg max-w-xl w-full p-5 sm:p-6 shadow-2xl relative max-h-[92vh] flex flex-col">
+      class="bg-surface border-2 border-theme rounded-lg max-w-xl w-full p-4 sm:p-6 shadow-2xl relative max-h-[92vh] flex flex-col">
       <div class="flex items-center justify-between pb-3 mb-4 border-b border-theme flex-shrink-0">
         <div class="flex items-center gap-2">
           <span class="hardware-screw"></span>
@@ -292,13 +292,13 @@
           <label class="block text-xs font-mono-code text-zinc-400 mb-2 flex-shrink-0">LANGUAGES (SELECT 2 OR
             MORE)</label>
           <div id="new-bundle-languages-container"
-            class="flex flex-wrap gap-1.5 max-h-[380px] sm:max-h-[420px] overflow-y-auto p-2.5 border border-theme bg-input rounded">
+            class="flex flex-wrap gap-1.5 max-h-40 sm:max-h-[380px] sm:max-h-[420px] overflow-y-auto p-2.5 border border-theme bg-input rounded">
           </div>
         </div>
 
         <div class="flex items-center justify-end pt-3 border-t border-theme flex-shrink-0">
           <button type="submit"
-            class="btn btn-action px-5 py-2 text-xs font-mono-code font-bold text-white rounded">
+            class="btn btn-action px-3.5 py-1.5 sm:px-5 sm:py-2 text-xs font-mono-code font-bold text-white rounded">
             CREATE PACK
           </button>
         </div>
@@ -309,7 +309,7 @@
   <div id="bulk-generator-modal"
     class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div
-      class="bg-surface border-2 border-theme rounded-lg max-w-4xl w-full p-4 sm:p-6 shadow-2xl relative max-h-[94vh] flex flex-col panel-accent">
+      class="bg-surface border-2 border-theme rounded-lg max-w-4xl w-full p-3.5 sm:p-6 shadow-2xl relative max-h-[94vh] flex flex-col panel-accent">
       <div class="spectrum-bar rounded-t-sm mb-3">
         <span></span><span></span><span></span><span></span><span></span>
       </div>
@@ -325,9 +325,9 @@
           class="text-zinc-500 hover:text-zinc-200 text-lg leading-none font-mono-code cursor-pointer">&times;</button>
       </div>
 
-      <div id="bulk-form-container" class="flex flex-col gap-4 overflow-y-auto flex-1 pr-1 text-xs font-mono-code">
-        <div id="bulk-panel-text" class="bg-panel border border-theme p-3 rounded flex flex-col gap-3">
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <div id="bulk-form-container" class="flex flex-col gap-3 sm:gap-4 overflow-y-auto flex-1 pr-1 text-xs font-mono-code">
+        <div id="bulk-panel-text" class="bg-panel border border-theme p-2.5 sm:p-3 rounded flex flex-col gap-2.5 sm:gap-3">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
             <div>
               <div class="flex items-center justify-between mb-1">
                 <label class="block text-xs font-mono-code text-zinc-300 font-bold">UPLOAD DOCUMENT (.TXT OR .EPUB)</label>
@@ -339,15 +339,15 @@
             <div class="relative w-full">
               <label class="block text-xs font-mono-code text-zinc-300 font-bold mb-1">EXTRACTION MODE</label>
               <button type="button" id="btn-bulk-text-mode"
-                class="dropdown-trigger w-full p-2.5 rounded text-xs font-mono-code flex items-center justify-between cursor-pointer">
+                class="dropdown-trigger w-full p-2 sm:p-2.5 rounded text-xs font-mono-code flex items-center justify-between cursor-pointer">
               </button>
               <div id="popover-bulk-text-mode"
-                class="hidden absolute top-full left-0 right-0 mt-1 bg-panel border-2 border-theme rounded shadow-2xl p-1.5 z-50 max-h-56 overflow-y-auto">
+                class="hidden absolute top-full left-0 right-0 mt-1 bg-panel border-2 border-theme rounded shadow-2xl p-1.5 z-50 max-h-40 sm:max-h-56 overflow-y-auto">
               </div>
             </div>
           </div>
 
-          <div class="bg-surface border border-theme p-3 rounded flex flex-col gap-2">
+          <div class="bg-surface border border-theme p-2.5 sm:p-3 rounded flex flex-col gap-2">
             <div class="flex items-center justify-between text-xs font-mono-code">
               <div class="flex items-center gap-2">
                 <span class="hardware-screw"></span>
@@ -370,8 +370,8 @@
             <div class="flex items-center justify-end">
               <button type="button" id="btn-clear-raw-text" class="hidden text-[10px] text-zinc-400 hover:text-danger underline font-mono-code cursor-pointer">CLEAR TEXT</button>
             </div>
-            <textarea id="bulk-raw-text" rows="8" placeholder="OR PASTE RAW TEXT / ARTICLE (paste article, subtitles, or book excerpts here...)"
-              class="w-full bg-input border border-theme text-main p-3 text-xs font-mono-code rounded min-h-[160px] focus:outline-none focus:border-success"></textarea>
+            <textarea id="bulk-raw-text" rows="4" placeholder="OR PASTE RAW TEXT / ARTICLE (paste article, subtitles, or book excerpts here...)"
+              class="w-full bg-input border border-theme text-main p-2 sm:p-3 text-xs font-mono-code rounded min-h-[90px] sm:rows-8 sm:min-h-[160px] focus:outline-none focus:border-success"></textarea>
           </div>
 
           <div class="flex flex-wrap items-center justify-between gap-2">
@@ -380,13 +380,13 @@
               <span>Filter common English stopwords (the, a, is...)</span>
             </label>
             <button type="button" id="btn-analyze-text"
-              class="btn px-4 py-2 text-xs font-mono-code font-bold text-success border border-success/50 rounded hover:opacity-90 cursor-pointer">
+              class="btn px-3 py-1.5 sm:px-4 sm:py-2 text-xs font-mono-code font-bold text-success border border-success/50 rounded hover:opacity-90 cursor-pointer">
               PARSE &amp; EXTRACT
             </button>
           </div>
         </div>
 
-        <div class="bg-panel border border-theme p-3 rounded flex flex-col gap-2.5">
+        <div class="bg-panel border border-theme p-2.5 sm:p-3 rounded flex flex-col gap-2.5">
           <div class="flex items-center justify-between border-b border-theme pb-2">
             <div class="flex items-center gap-2">
               <span class="hardware-screw"></span>
@@ -398,12 +398,12 @@
             </div>
           </div>
           <div id="bulk-candidates-container"
-            class="flex flex-wrap gap-1.5 min-h-[180px] max-h-72 overflow-y-auto p-2.5 bg-input border border-theme rounded">
+            class="flex flex-wrap gap-1.5 min-h-[100px] max-h-40 sm:min-h-[180px] sm:max-h-72 overflow-y-auto p-2 sm:p-2.5 bg-input border border-theme rounded">
             <span class="text-zinc-600 text-xs p-2">Extract candidates above to preview here.</span>
           </div>
         </div>
 
-        <div class="bg-panel border border-theme p-3 rounded flex flex-col gap-3">
+        <div class="bg-panel border border-theme p-2.5 sm:p-3 rounded flex flex-col gap-3">
           <div class="flex items-center gap-4">
             <label class="flex items-center gap-2 cursor-pointer text-xs">
               <input type="radio" name="bulk-dest-choice" id="bulk-dest-new" value="new" checked autocomplete="off" class="accent-emerald-500">
@@ -424,10 +424,10 @@
           <div id="bulk-existing-pack-row" class="hidden flex flex-col gap-1.5 relative w-full">
             <label class="block text-[10px] text-zinc-400 font-mono-code font-bold uppercase">CHOOSE DESTINATION PACK</label>
             <button type="button" id="btn-bulk-dest-pack"
-              class="dropdown-trigger w-full p-2.5 rounded text-xs font-mono-code flex items-center justify-between cursor-pointer">
+              class="dropdown-trigger w-full p-2 sm:p-2.5 rounded text-xs font-mono-code flex items-center justify-between cursor-pointer">
             </button>
             <div id="popover-bulk-dest-pack"
-              class="hidden absolute top-full left-0 right-0 mt-1 bg-panel border-2 border-theme rounded shadow-2xl p-1.5 z-50 max-h-56 overflow-y-auto">
+              class="hidden absolute top-full left-0 right-0 mt-1 bg-panel border-2 border-theme rounded shadow-2xl p-1.5 z-50 max-h-40 sm:max-h-56 overflow-y-auto">
             </div>
           </div>
 
@@ -439,7 +439,7 @@
               </div>
             </div>
             <div id="bulk-languages-container"
-              class="flex flex-wrap gap-1.5 min-h-[140px] max-h-72 overflow-y-auto p-2.5 border border-theme bg-input rounded">
+              class="flex flex-wrap gap-1.5 min-h-[90px] max-h-36 sm:min-h-[140px] sm:max-h-72 overflow-y-auto p-2 sm:p-2.5 border border-theme bg-input rounded">
             </div>
           </div>
         </div>
@@ -464,7 +464,7 @@
 
       <div class="flex items-center justify-end pt-3 mt-3 border-t border-theme flex-shrink-0">
         <button type="button" id="btn-bulk-synthesize"
-          class="btn btn-action px-5 py-2 text-xs font-mono-code font-bold text-white rounded cursor-pointer">
+          class="btn btn-action px-3.5 py-1.5 sm:px-5 sm:py-2 text-xs font-mono-code font-bold text-white rounded cursor-pointer">
           SYNTHESIZE BULK PACK
         </button>
       </div>
@@ -473,7 +473,7 @@
 
   <div id="themed-modal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 items-center justify-center p-4 hidden">
     <div
-      class="bg-surface border-2 border-theme rounded-lg max-w-md w-full p-5 sm:p-6 shadow-2xl relative panel-accent">
+      class="bg-surface border-2 border-theme rounded-lg max-w-md w-full p-4 sm:p-6 shadow-2xl relative panel-accent">
       <div class="spectrum-bar rounded-t-sm mb-3">
         <span></span><span></span><span></span><span></span><span></span>
       </div>
@@ -494,7 +494,7 @@
 
       <div class="flex items-center justify-end gap-3 pt-3 border-t border-theme">
         <button type="button" id="themed-modal-confirm"
-          class="btn px-5 py-2 text-xs font-mono-code font-bold tracking-wider rounded text-danger border border-danger/60 hover:opacity-90">
+          class="btn px-3.5 py-1.5 sm:px-5 sm:py-2 text-xs font-mono-code font-bold tracking-wider rounded text-danger border border-danger/60 hover:opacity-90">
           CONFIRM
         </button>
       </div>
@@ -504,8 +504,8 @@
   <script src="/static/js/api.js?v=20261015a"></script>
   <script src="/static/js/audio.js?v=20260927d"></script>
   <script src="/static/js/oscilloscope.js?v=20260927d"></script>
-  <script src="/static/js/translate.js?v=20260930a"></script>
-  <script src="/static/js/bundles.js?v=20261015s"></script>
+  <script src="/static/js/translate.js?v=20261015b"></script>
+  <script src="/static/js/bundles.js?v=20261015t"></script>
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
       if (typeof AudioEngine !== 'undefined') {

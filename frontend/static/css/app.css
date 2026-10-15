@@ -670,5 +670,19 @@ input[type="file"]::file-selector-button:hover {
   color: var(--color-secondary);
 }
 
-
-
+@media (max-width: 640px) {
+  .btn {
+    letter-spacing: 0.02em;
+  }
+  .dropdown-trigger {
+    padding: 0.5rem 0.625rem;
+  }
+  .dropdown-popover {
+    max-height: 10rem;
+  }
+  .pack-card {
+    max-width: 320px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}

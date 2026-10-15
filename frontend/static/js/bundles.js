@@ -75,9 +75,9 @@ const ThemedModal = {
       if (this.confirmBtn) {
         this.confirmBtn.textContent = options.confirmText || 'CONFIRM';
         if (options.isDanger) {
-          this.confirmBtn.className = 'btn btn-danger px-5 py-2 text-xs font-mono-code font-bold tracking-wider rounded cursor-pointer';
+          this.confirmBtn.className = 'btn btn-danger px-3.5 py-1.5 sm:px-5 sm:py-2 text-xs font-mono-code font-bold tracking-wider rounded cursor-pointer';
         } else {
-          this.confirmBtn.className = 'btn btn-action px-5 py-2 text-xs font-mono-code font-bold tracking-wider rounded cursor-pointer';
+          this.confirmBtn.className = 'btn btn-action px-3.5 py-1.5 sm:px-5 sm:py-2 text-xs font-mono-code font-bold tracking-wider rounded cursor-pointer';
         }
       }
       if (this.cancelBtn) {
@@ -98,7 +98,7 @@ const ThemedModal = {
       if (this.messageEl) this.messageEl.textContent = message;
       if (this.confirmBtn) {
         this.confirmBtn.textContent = 'OK';
-        this.confirmBtn.className = 'btn px-5 py-2 text-xs font-mono-code font-bold tracking-wider rounded text-main border border-theme hover:border-zinc-400 cursor-pointer';
+        this.confirmBtn.className = 'btn px-3.5 py-1.5 sm:px-5 sm:py-2 text-xs font-mono-code font-bold tracking-wider rounded text-main border border-theme hover:border-zinc-400 cursor-pointer';
       }
       if (this.cancelBtn) {
         this.cancelBtn.classList.add('hidden');
@@ -202,7 +202,7 @@ const BundlesController = {
       btn.type = 'button';
       const code = (lang.code || '').toLowerCase();
       const isActive = this.newBundleSelectedLangs.has(code);
-      btn.className = `chip px-2.5 py-1 text-xs font-mono-code font-bold uppercase rounded cursor-pointer transition ${isActive ? 'active' : ''}`;
+      btn.className = `chip px-2 py-0.5 sm:px-2.5 sm:py-1 text-[11px] sm:text-xs font-mono-code font-bold uppercase rounded cursor-pointer transition ${isActive ? 'active' : ''}`;
       btn.dataset.code = code;
       btn.innerHTML = `${lang.name} <span class="text-[10px] opacity-75">${code.toUpperCase()}</span>`;
 
@@ -486,7 +486,7 @@ const BundlesController = {
       const langObj = this.allLanguages.find(lang => lang.code === l);
       const name = langObj ? langObj.name : l.toUpperCase();
       return `
-        <th class="matrix-col-header px-3 py-2 text-left text-xs font-bold text-zinc-200 font-mono-code tracking-wider border-b border-theme select-none transition-colors"
+        <th class="matrix-col-header px-2 sm:px-3 py-1.5 sm:py-2 text-left text-xs font-bold text-zinc-200 font-mono-code tracking-wider border-b border-theme select-none transition-colors"
             draggable="true"
             data-lang-code="${l}"
             data-col-index="${index}"
@@ -499,7 +499,7 @@ const BundlesController = {
         </th>
       `;
     }).join('');
-    ths += `<th class="px-3 py-2 text-right text-xs font-bold text-zinc-500 font-mono-code tracking-wider border-b border-theme select-none">ACTION</th>`;
+    ths += `<th class="px-2 sm:px-3 py-1.5 sm:py-2 text-right text-xs font-bold text-zinc-500 font-mono-code tracking-wider border-b border-theme select-none">ACTION</th>`;
 
     let rowsHtml = '';
     if (entries.length === 0) {
@@ -514,12 +514,12 @@ const BundlesController = {
       for (const entry of entries) {
         let tds = langs.map(l => {
           const val = entry.translations[l] || '<span class="text-zinc-600 font-mono-code text-[11px]">—</span>';
-          return `<td class="px-3 py-2 text-xs font-mono-code text-zinc-200 border-b border-subtle">${val}</td>`;
+          return `<td class="px-2 sm:px-3 py-1.5 sm:py-2 text-xs font-mono-code text-zinc-200 border-b border-subtle">${val}</td>`;
         }).join('');
 
         tds += `
-          <td class="px-3 py-2 text-right border-b border-subtle">
-            <button type="button" class="del-entry-btn btn px-2.5 py-1 text-[11px] font-bold text-red-400 hover:text-red-300 rounded cursor-pointer" data-entry-id="${entry.id}">
+          <td class="px-2 sm:px-3 py-1.5 sm:py-2 text-right border-b border-subtle">
+            <button type="button" class="del-entry-btn btn px-2 py-0.5 sm:px-2.5 sm:py-1 text-[10px] sm:text-[11px] font-bold text-red-400 hover:text-red-300 rounded cursor-pointer" data-entry-id="${entry.id}">
               DELETE
             </button>
           </td>
@@ -855,7 +855,7 @@ const BulkGeneratorController = {
       currentOptions.forEach((opt) => {
         const isActive = String(opt.value) === String(currentVal);
         const item = document.createElement('div');
-        item.className = `dropdown-item p-2 rounded flex items-center justify-between text-xs font-mono-code mb-1 cursor-pointer ${isActive ? 'active' : ''}`;
+        item.className = `dropdown-item p-1.5 sm:p-2 rounded flex items-center justify-between text-xs font-mono-code mb-1 cursor-pointer ${isActive ? 'active' : ''}`;
         item.innerHTML = `
           <div class="flex items-center gap-2 truncate min-w-0">
             <span class="font-bold truncate ${isActive ? 'text-secondary' : 'text-main'}">${opt.label}</span>
@@ -1020,7 +1020,7 @@ const BulkGeneratorController = {
       btn.type = 'button';
       const code = (lang.code || '').toLowerCase();
       const isActive = this.selectedTargetLangs.has(code);
-      btn.className = `chip px-2.5 py-1 text-xs font-mono-code font-bold uppercase rounded cursor-pointer transition ${isActive ? 'active' : ''}`;
+      btn.className = `chip px-2 py-0.5 sm:px-2.5 sm:py-1 text-[11px] sm:text-xs font-mono-code font-bold uppercase rounded cursor-pointer transition ${isActive ? 'active' : ''}`;
       btn.dataset.code = code;
       btn.innerHTML = `${lang.name} <span class="text-[10px] opacity-75">${code.toUpperCase()}</span>`;
 
@@ -1215,7 +1215,7 @@ const BulkGeneratorController = {
       const isSelected = this.selectedCandidates.has(c.text);
       const chip = document.createElement('button');
       chip.type = 'button';
-      chip.className = `chip px-2.5 py-1.5 text-xs font-mono-code rounded cursor-pointer transition ${
+      chip.className = `chip px-2 py-0.5 sm:px-2.5 sm:py-1.5 text-[11px] sm:text-xs font-mono-code rounded cursor-pointer transition ${
         isSelected ? 'active' : 'bg-surface text-zinc-400 border border-theme'
       }`;
       chip.innerHTML = `<span>${c.text}</span> ${c.frequency > 1 ? `<span class="opacity-60 text-[10px] ml-1">×${c.frequency}</span>` : ''}`;

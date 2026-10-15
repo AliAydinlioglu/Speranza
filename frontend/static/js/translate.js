@@ -81,7 +81,7 @@ const TranslateController = {
       const btn = document.createElement("button");
       btn.type = "button";
       const isActive = this.selectedTargetLangs.has(lang.code);
-      btn.className = `chip px-2.5 py-1 text-xs font-mono-code font-bold uppercase rounded cursor-pointer transition ${isActive ? "active" : ""}`;
+      btn.className = `chip px-2 py-0.5 sm:px-2.5 sm:py-1 text-[11px] sm:text-xs font-mono-code font-bold uppercase rounded cursor-pointer transition ${isActive ? "active" : ""}`;
       btn.dataset.code = lang.code;
       btn.innerHTML = `${lang.name} <span class="text-[10px] opacity-75">${lang.code}</span>`;
 
