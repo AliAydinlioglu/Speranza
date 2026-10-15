@@ -6,7 +6,7 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![Python](https://img.shields.io/badge/Python-3.11-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![Argos Translate](https://img.shields.io/badge/NLP-Argos%20Translate%20(Offline)-FF6B33)](https://www.argosopentech.com/)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![License](https://img.shields.io/badge/license-MIT%20(No--Sale)-blue.svg)](LICENSE)
 
 > **Private, offline multi-target neural translation and vocabulary cassette studio.**
 
@@ -26,7 +26,7 @@ Unlike Google Translate, DeepL, or cloud translation services:
 
 ## UI & Design Context
 
-The interface is built as a tribute to **1970s and 1980s retro hardware, industrial computing, and cassette-futurism**, featuring amber/green phosphor CRT styling, mechanical click feedback, real-time audio oscilloscope visualizers, and animated vector cassette tape spools.
+The interface is built as a tribute to **1970s and 1980s retro hardware, industrial computing, and cassette-futurism**.
 
 ![Speranza Interface Overview](docs/screenshots/01-live-translation.png)
 
@@ -35,14 +35,14 @@ The interface is built as a tribute to **1970s and 1980s retro hardware, industr
 ## Features
 
 ### 1. Multi-Target Live Translation
-Type or paste text into the terminal and select multiple destination languages (e.g., Dutch, German, Spanish, Turkish, French). Speranza translates into all selected languages simultaneously in real time with synchronized CRT phosphor outputs.
+Speranza translates into all selected languages simultaneously in real time.
 
 <p align="center">
   <img src="docs/screenshots/02-source-language-tuner.png" alt="Frequency Tuner Language Selection" width="100%" />
 </p>
 
 ### 2. Vocabulary Cassettes
-Organize custom vocabulary lists, travel phrases, or study decks into analog tape cassettes with customizable vector body shells and animated spools.
+Organize custom vocabulary cassettes.
 
 <p align="center">
   <img src="docs/screenshots/03-vocabulary-cassettes.png" alt="Vocabulary Cassette Decks" width="100%" />
@@ -53,17 +53,20 @@ Organize custom vocabulary lists, travel phrases, or study decks into analog tap
 </p>
 
 ### 3. Cassette Creation & Language Sets
-Define custom vocabulary cassettes configured with any combination of installed language models using interactive chip selectors:
+Define custom vocabulary cassettes configured with any combination of installed language models:
 
 <p align="center">
   <img src="docs/screenshots/05-create-pack-modal.png" alt="Create Vocabulary Cassette Dialog" width="100%" />
 </p>
 
 ### 4. Cassette Generator (Corpus & Book Importer)
-Import complete books or articles (`.txt`, `.epub`) or paste raw text. Extract high-frequency vocabulary lemmas with an uncapped limit slider (0 to 5000+ / ALL), preview candidate words, and synthesize new vocabulary cassettes or append to existing ones with real-time progress telemetry.
+Import complete books or articles (`.txt`, `.epub`) or paste raw text. Extract high-frequency vocabulary lemmas with an uncapped limit slider (0 to 5000+ / ALL), preview candidate words, and synthesize new vocabulary cassettes or append to existing ones.
 
 <p align="center">
   <img src="docs/screenshots/06-cassette-generator.png" alt="Cassette Generator Modal" width="100%" />
+</p>
+<p align="center">
+  <img src="docs/screenshots/07-cassette-generator.png" alt="Cassette Generator Modal" width="100%" />
 </p>
 
 ---
@@ -131,62 +134,6 @@ Everything you create is saved across container restarts using two named volumes
 | :--- | :--- | :--- |
 | `translator_db` | `/app/data` | SQLite database file (`bundles.db`) with your saved cassettes, phrases, and translations. |
 | `translator_models` | `/home/appuser/.local/share/argos-translate` | Downloaded Argos Translate neural language packages so models persist across container restarts. |
-
----
-
-## Repository Structure
-
-Speranza is structured into decoupled backend and frontend domains:
-
-```text
-Speranza/
-├── backend/
-│   ├── app/
-│   │   ├── api/
-│   │   │   ├── router.py             # Main API router blueprint
-│   │   │   └── routes/
-│   │   │       ├── health.py         # System health endpoint
-│   │   │       ├── languages.py      # Language model discovery & installation
-│   │   │       ├── translate.py      # Real-time multi-target translation
-│   │   │       ├── bundles.py        # Vocabulary cassette CRUD & matrix
-│   │   │       └── corpus.py         # Corpus analysis & bulk extraction
-│   │   ├── core/
-│   │   │   ├── config.py             # Settings & filesystem paths
-│   │   │   └── models.py             # Pydantic data schemas
-│   │   ├── engine/
-│   │   │   ├── package_manager.py    # Argos package index & installation
-│   │   │   └── translator.py         # Non-blocking neural translation & English pivot
-│   │   ├── services/
-│   │   │   ├── corpus_service.py     # Frequency extraction & document parsing
-│   │   │   └── task_service.py       # Asynchronous bulk task management
-│   │   ├── storage/
-│   │   │   ├── database.py           # SQLite connection with WAL mode
-│   │   │   └── repository.py         # SQL CRUD repository & cascade operations
-│   │   └── main.py                   # FastAPI application initialization & lifespan
-│   ├── tests/                        # Comprehensive test suite
-│   └── requirements.txt              # Pinned backend dependencies
-├── frontend/
-│   ├── static/
-│   │   ├── css/
-│   │   │   ├── theme.css             # Centralized design tokens & CSS variables
-│   │   │   ├── app.css               # Chassis styling & retro tokens
-│   │   │   └── crt.css               # CRT scanlines & phosphor effects
-│   │   ├── js/
-│   │   │   ├── api.js                # Frontend API fetch client
-│   │   │   ├── audio.js              # Web Audio mechanical synthesizer
-│   │   │   ├── bundles.js            # Cassette deck & generator controller
-│   │   │   ├── oscilloscope.js       # Real-time CRT audio visualizer
-│   │   │   └── translate.js          # Live translation controller
-│   │   └── img/
-│   │       └── cassettes/            # Vector SVG cassette tape shell artwork
-│   └── templates/
-│       └── index.html                # Terminal user interface
-├── docs/
-│   └── screenshots/                  # High-resolution interface captures
-├── compose.yaml                      # Rootless container orchestration
-├── Containerfile                     # OCI container build specification
-└── requirements.txt                  # Compatibility requirements reference
-```
 
 ---
 
@@ -261,4 +208,4 @@ In addition to the web UI, Speranza exposes a clean REST API under `/api`:
 
 ## License
 
-MIT License. See [LICENSE](LICENSE) for details.
+Modified MIT License (No-Sale Clause). See [LICENSE](LICENSE) for details.
