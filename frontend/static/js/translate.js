@@ -33,7 +33,7 @@ const TranslateController = {
     displayBtn.innerHTML = `
       <div class="flex items-center gap-2">
         <span class="led-indicator led-amber"></span>
-        <span class="text-[#EDE8D0] font-mono-code font-bold tracking-wider">${currentLang.name.toUpperCase()}</span>
+        <span class="text-main font-mono-code font-bold tracking-wider">${currentLang.name.toUpperCase()}</span>
         <span class="text-[11px] text-zinc-400 font-mono-code font-bold">[${currentLang.code.toUpperCase()}]</span>
       </div>
       <div class="flex items-center gap-1.5 text-[10px] font-mono-code text-zinc-400">
@@ -48,10 +48,10 @@ const TranslateController = {
     for (const lang of sorted) {
       const isActive = lang.code === this.selectedSourceLang;
       const item = document.createElement("div");
-      item.className = `frequency-item p-2 rounded border border-[#2D313D] flex items-center justify-between text-xs font-mono-code mb-1 ${isActive ? "active" : "bg-[#0E0F12] text-zinc-300"}`;
+      item.className = `dropdown-item p-2 rounded flex items-center justify-between text-xs font-mono-code mb-1 ${isActive ? "active" : ""}`;
       item.innerHTML = `
         <div class="flex items-center gap-2">
-          <span class="font-bold text-[#EDE8D0]">${lang.name.toUpperCase()}</span>
+          <span class="font-bold text-main">${lang.name.toUpperCase()}</span>
           <span class="text-[10px] text-zinc-400 font-bold">[${lang.code.toUpperCase()}]</span>
         </div>
         <span class="led-indicator ${isActive ? "led-amber" : "bg-zinc-700"}"></span>
@@ -81,7 +81,7 @@ const TranslateController = {
       const btn = document.createElement("button");
       btn.type = "button";
       const isActive = this.selectedTargetLangs.has(lang.code);
-      btn.className = `tactile-chip px-2.5 py-1 text-xs font-mono-code font-bold uppercase rounded cursor-pointer transition ${isActive ? "active" : ""}`;
+      btn.className = `chip px-2.5 py-1 text-xs font-mono-code font-bold uppercase rounded cursor-pointer transition ${isActive ? "active" : ""}`;
       btn.dataset.code = lang.code;
       btn.innerHTML = `${lang.name} <span class="text-[10px] opacity-75">${lang.code}</span>`;
 
@@ -170,7 +170,7 @@ const TranslateController = {
 
     if (statusText) {
       statusText.textContent = "TRANSLATING...";
-      statusText.classList.add("text-arc-orange");
+      statusText.classList.add("text-primary");
     }
     if (container) {
       container.classList.add("crt-distort-active");
@@ -195,7 +195,7 @@ const TranslateController = {
       this.renderOutputs(res.translations);
       if (statusText) {
         statusText.textContent = "[OUTPUT]";
-        statusText.classList.remove("text-arc-orange");
+        statusText.classList.remove("text-primary");
       }
     } catch (err) {
       if (window.AudioEngine) {
@@ -217,7 +217,7 @@ const TranslateController = {
 
       if (statusText) {
         statusText.textContent = "ERROR";
-        statusText.classList.add("text-arc-orange");
+        statusText.classList.add("text-primary");
       }
       if (container) {
         container.innerHTML = `
@@ -246,17 +246,17 @@ const TranslateController = {
 
     for (const [code, text] of Object.entries(translations)) {
       const card = document.createElement("div");
-      card.className = "crt-viewport p-4 mb-3 border border-zinc-800 rounded bg-[#070B08]";
+      card.className = "crt-viewport p-4 mb-3 border border-zinc-800 rounded bg-terminal";
       const langName = langMap[code] || code.toUpperCase();
 
       card.innerHTML = `
-        <div class="flex items-center justify-between pb-2 mb-2 border-b border-zinc-800 text-[11px] font-mono-code">
+        <div class="flex items-center justify-between pb-2 mb-2 border-b border-zinc-800 text-[11px] font-mono-code relative z-10">
           <div class="flex items-center gap-2">
             <span class="led-indicator led-green"></span>
             <span class="text-zinc-200 font-bold tracking-wide">${langName.toUpperCase()}</span>
             <span class="text-[10px] text-zinc-400 font-bold">[${code.toUpperCase()}]</span>
           </div>
-          <button type="button" class="copy-btn tactile-btn px-2.5 py-1 text-[11px] font-bold text-zinc-300 rounded hover:text-white" data-text="${encodeURIComponent(text)}">
+          <button type="button" class="copy-btn btn px-2.5 py-1 text-[11px] font-bold text-zinc-300 rounded hover:text-white" data-text="${encodeURIComponent(text)}">
             COPY
           </button>
         </div>

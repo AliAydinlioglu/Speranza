@@ -1,10 +1,10 @@
 .crt-viewport {
   position: relative;
-  background-color: var(--crt-bg);
+  background-color: var(--color-terminal-bg);
   border-radius: 6px;
   overflow: hidden;
-  box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.95), inset 0 0 6px rgba(0, 255, 100, 0.15);
-  border: 3px solid #14171b;
+  box-shadow: inset 0 0 16px rgba(0, 0, 0, 0.7), inset 0 0 3px rgba(51, 255, 119, 0.12);
+  border: 2px solid var(--color-border);
 }
 
 .crt-viewport-flush-bottom {
@@ -17,10 +17,10 @@
   content: " ";
   position: absolute;
   inset: 0;
-  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.45) 50%),
-              linear-gradient(90deg, rgba(255, 0, 0, 0.04), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.04));
-  z-index: 20;
-  background-size: 100% 3px, 6px 100%;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.16) 50%),
+              linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 255, 0, 0.02));
+  z-index: 5;
+  background-size: 100% 4px, 6px 100%;
   pointer-events: none;
 }
 
@@ -28,9 +28,9 @@
   content: " ";
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at center, transparent 65%, rgba(0, 0, 0, 0.82) 100%);
+  background: radial-gradient(circle at center, transparent 72%, rgba(0, 0, 0, 0.42) 100%);
   pointer-events: none;
-  z-index: 21;
+  z-index: 6;
 }
 
 @keyframes crt-flicker {
@@ -46,19 +46,43 @@
 }
 
 .crt-content {
-  animation: crt-flicker 0.15s infinite;
-  text-shadow: 0 0 4px rgba(51, 255, 119, 0.55), 0 0 8px rgba(51, 255, 119, 0.25);
-  color: var(--crt-green);
+  position: relative;
+  z-index: 10;
+  color: var(--color-terminal-text);
+  text-shadow: 0 0 1px rgba(78, 250, 138, 0.55), 0 0 6px rgba(51, 255, 119, 0.22);
+  font-weight: 500;
+  letter-spacing: 0.015em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#carrier-input {
+  position: relative;
+  z-index: 10;
+  color: var(--color-terminal-text);
+  font-weight: 500;
+  letter-spacing: 0.015em;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#carrier-input::placeholder {
+  color: rgba(51, 255, 119, 0.42);
+  font-weight: 400;
+  text-shadow: none;
 }
 
 .crt-amber {
-  color: var(--crt-amber);
-  text-shadow: 0 0 4px rgba(255, 184, 51, 0.55), 0 0 8px rgba(255, 184, 51, 0.25);
+  color: var(--color-terminal-amber);
+  text-shadow: 0 0 1px rgba(255, 184, 51, 0.55), 0 0 6px rgba(255, 184, 51, 0.22);
+  font-weight: 500;
 }
 
 .crt-cyan {
-  color: var(--crt-cyan);
-  text-shadow: 0 0 4px rgba(46, 230, 214, 0.55), 0 0 8px rgba(46, 230, 214, 0.25);
+  color: var(--color-terminal-cyan);
+  text-shadow: 0 0 1px rgba(46, 230, 214, 0.55), 0 0 6px rgba(46, 230, 214, 0.22);
+  font-weight: 500;
 }
 
 @keyframes chromatic-shift {
@@ -128,12 +152,11 @@
 }
 
 .signal-corrupted {
-  text-shadow: -3px 0 #FF003C, 3px 0 #00E6FF !important;
+  text-shadow: -3px 0 var(--color-danger), 3px 0 var(--color-accent) !important;
   filter: contrast(180%) brightness(120%) hue-rotate(90deg);
   animation: scanline-tearing 0.16s steps(2, end) infinite, crt-flicker 0.08s infinite !important;
 }
 
 .signal-corrupted * {
-  text-shadow: -3px 0 #FF003C, 3px 0 #00E6FF !important;
+  text-shadow: -3px 0 var(--color-danger), 3px 0 var(--color-accent) !important;
 }
-

@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException, status
 from backend.app.core.models import (
     BundleCreateRequest,
     BundleDetail,
+    BundleLanguagesUpdateRequest,
     BundleSummary,
     EntryCreateRequest,
     EntryResponse,
@@ -28,12 +29,14 @@ async def create_bundle(payload: BundleCreateRequest):
     created = repository.create_bundle(
         name=payload.name,
         language_codes=payload.languages,
+        style_id=payload.style_id,
     )
     return BundleSummary(
         id=created["id"],
         name=created["name"],
         languages=created["languages"],
         item_count=0,
+        style_id=created.get("style_id"),
     )
 
 
@@ -45,7 +48,7 @@ async def get_bundle(id: str):
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Bundle with id '{id}' not found",
         )
-    return bundle
+    return BundleDetail(**bundle)
 
 
 @router.post("/{id}/entries", response_model=EntryResponse, status_code=status.HTTP_201_CREATED)
@@ -71,7 +74,7 @@ async def create_bundle_entry(id: str, payload: EntryCreateRequest):
         bundle_id=id,
         translations=translations,
     )
-    return entry
+    return EntryResponse(**entry)
 
 
 @router.delete("/{id}/entries/{entry_id}")
@@ -117,3 +120,28 @@ async def delete_bundle(id: str):
         )
 
     return {"status": "deleted", "id": id}
+
+
+@router.patch("/{id}/languages")
+async def update_bundle_languages(id: str, payload: BundleLanguagesUpdateRequest):
+    bundle = repository.get_bundle(id)
+    if not bundle:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Bundle with id '{id}' not found",
+        )
+
+    if not payload.languages or len(payload.languages) < 2:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Languages must contain at least 2 language codes",
+        )
+
+    if set(payload.languages) != set(bundle["languages"]):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Reordered languages must match existing bundle languages",
+        )
+
+    updated = repository.set_bundle_languages(id, payload.languages)
+    return {"status": "updated", "languages": updated}

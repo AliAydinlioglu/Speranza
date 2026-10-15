@@ -1,14 +1,15 @@
 const API = {
   async request(path, options = {}) {
+    const isFormData = options.body instanceof FormData;
     const config = {
       headers: {
-        'Content-Type': 'application/json',
+        ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
         ...options.headers,
       },
       ...options,
     };
 
-    if (config.body && typeof config.body === 'object') {
+    if (!isFormData && config.body && typeof config.body === 'object') {
       config.body = JSON.stringify(config.body);
     }
 
@@ -63,10 +64,12 @@ const API = {
     return this.request('/api/bundles');
   },
 
-  async createBundle(name, languages) {
+  async createBundle(name, languages, styleId = null) {
+    const body = { name, languages };
+    if (styleId) body.style_id = styleId;
     return this.request('/api/bundles', {
       method: 'POST',
-      body: { name, languages },
+      body,
     });
   },
 
@@ -93,17 +96,66 @@ const API = {
     });
   },
 
-  async getGdprPolicy() {
-    return this.request('/api/gdpr/policy');
+  async getWordfreqCandidates(lang = 'en', topN = 100, rankStart = 0) {
+    const params = new URLSearchParams({ lang, top_n: String(topN), rank_start: String(rankStart) });
+    return this.request(`/api/corpus/presets/wordfreq?${params.toString()}`);
   },
 
-  async exportGdprData() {
-    return this.request('/api/gdpr/export');
+  async getSentenceCategories() {
+    return this.request('/api/corpus/presets/sentence-categories');
   },
 
-  async eraseGdprData() {
-    return this.request('/api/gdpr/erase', {
+  async getSentenceCandidates(category = null, count = 50) {
+    const params = new URLSearchParams({ count: String(count) });
+    if (category && category !== 'all') {
+      params.append('category', category);
+    }
+    return this.request(`/api/corpus/presets/sentences?${params.toString()}`);
+  },
+
+  async analyzeCorpusText(text, mode = 'words', topN = 50, filterStopwords = true, minLength = 3) {
+    return this.request('/api/corpus/analyze/text', {
       method: 'POST',
+      body: {
+        text,
+        mode,
+        top_n: topN,
+        filter_stopwords: filterStopwords,
+        min_length: minLength,
+      },
+    });
+  },
+
+  async analyzeCorpusFile(formData) {
+    return this.request('/api/corpus/analyze/file', {
+      method: 'POST',
+      body: formData,
+    });
+  },
+
+  async bulkGenerateBundle(bundleName, bundleId, languages, sourceLang, phrases, styleId = null) {
+    const body = {
+      bundle_name: bundleName,
+      bundle_id: bundleId,
+      languages,
+      source_lang: sourceLang,
+      phrases,
+    };
+    if (styleId) body.style_id = styleId;
+    return this.request('/api/bundles/bulk-generate', {
+      method: 'POST',
+      body,
+    });
+  },
+
+  async getBulkTaskProgress(taskId) {
+    return this.request(`/api/bundles/bulk-tasks/${encodeURIComponent(taskId)}`);
+  },
+
+  async updateBundleLanguages(bundleId, languages) {
+    return this.request(`/api/bundles/${encodeURIComponent(bundleId)}/languages`, {
+      method: 'PATCH',
+      body: { languages },
     });
   },
 };

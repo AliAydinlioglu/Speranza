@@ -5,9 +5,10 @@ from unittest.mock import patch
 
 try:
     import fastapi
-    from backend.app.api.routes import bundles, gdpr, health, languages, translate
+    from backend.app.api.routes import bundles, health, languages, translate
     from backend.app.core.models import (
         BundleCreateRequest,
+        BundleLanguagesUpdateRequest,
         EntryCreateRequest,
         InstallLanguageRequest,
         TranslateRequest,
@@ -35,38 +36,6 @@ class TestApiEndpoints(unittest.TestCase):
     def test_health_endpoint(self):
         result = asyncio.run(health.health())
         self.assertEqual(result, {"status": "healthy"})
-
-    def test_gdpr_endpoints(self):
-        with patch("backend.app.services.gdpr_service.repository.get_db") as mock_db:
-            mock_db.return_value.__enter__.return_value = self.conn
-
-            policy = asyncio.run(gdpr.get_gdpr_policy())
-            self.assertIn("GDPR", policy.compliance)
-            self.assertEqual(len(policy.rights), 5)
-
-            repository.create_bundle(
-                name="Survival Pack",
-                language_codes=["en", "es"],
-                bundle_id="b-surv",
-                conn=self.conn,
-            )
-            repository.add_entry_with_translations(
-                bundle_id="b-surv",
-                translations={"en": "Water", "es": "Agua"},
-                entry_id="e-water",
-                conn=self.conn,
-            )
-
-            export_data = asyncio.run(gdpr.export_gdpr_data())
-            self.assertEqual(export_data.total_bundles, 1)
-            self.assertEqual(export_data.total_entries, 1)
-            self.assertEqual(export_data.bundles[0].name, "Survival Pack")
-
-            purge_res = asyncio.run(gdpr.erase_gdpr_data())
-            self.assertEqual(purge_res.status, "purged")
-
-            export_after = asyncio.run(gdpr.export_gdpr_data())
-            self.assertEqual(export_after.total_bundles, 0)
 
     def test_bundle_crud_routes(self):
         with patch("backend.app.api.routes.bundles.repository.get_db") as mock_db:
@@ -96,6 +65,18 @@ class TestApiEndpoints(unittest.TestCase):
                     )
                 )
                 self.assertEqual(entry.translations["fr"], "Signal détecté")
+
+            patch_res = asyncio.run(
+                bundles.update_bundle_languages(
+                    created.id,
+                    BundleLanguagesUpdateRequest(languages=["fr", "en"]),
+                )
+            )
+            self.assertEqual(patch_res["status"], "updated")
+            self.assertEqual(patch_res["languages"], ["fr", "en"])
+
+            reordered = asyncio.run(bundles.get_bundle(created.id))
+            self.assertEqual(reordered.languages, ["fr", "en"])
 
             del_res = asyncio.run(bundles.delete_bundle_entry(created.id, entry.id))
             self.assertEqual(del_res["status"], "deleted")

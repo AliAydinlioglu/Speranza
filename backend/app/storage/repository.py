@@ -8,7 +8,8 @@ SCHEMA_DDL = """
 CREATE TABLE IF NOT EXISTS bundles (
     id TEXT PRIMARY KEY,
     name TEXT NOT NULL UNIQUE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    style_id TEXT
 );
 
 CREATE TABLE IF NOT EXISTS bundle_languages (
@@ -52,19 +53,24 @@ def _connection_context(conn: sqlite3.Connection | None) -> Generator[sqlite3.Co
 def init_db(conn: sqlite3.Connection | None = None) -> None:
     with _connection_context(conn) as db:
         db.executescript(SCHEMA_DDL)
+        try:
+            db.execute("ALTER TABLE bundles ADD COLUMN style_id TEXT;")
+        except sqlite3.OperationalError:
+            pass
 
 
 def create_bundle(
     name: str,
     language_codes: list[str],
     bundle_id: str | None = None,
+    style_id: str | None = None,
     conn: sqlite3.Connection | None = None,
 ) -> dict:
     actual_id = bundle_id or str(uuid.uuid4())
     with _connection_context(conn) as db:
         db.execute(
-            "INSERT INTO bundles (id, name) VALUES (?, ?);",
-            (actual_id, name),
+            "INSERT INTO bundles (id, name, style_id) VALUES (?, ?, ?);",
+            (actual_id, name, style_id),
         )
         for order, lang_code in enumerate(language_codes):
             db.execute(
@@ -75,6 +81,7 @@ def create_bundle(
         "id": actual_id,
         "name": name,
         "languages": language_codes,
+        "style_id": style_id,
     }
 
 
@@ -84,7 +91,7 @@ def get_bundle(
 ) -> dict | None:
     with _connection_context(conn) as db:
         bundle_row = db.execute(
-            "SELECT id, name, created_at FROM bundles WHERE id = ?;",
+            "SELECT id, name, created_at, style_id FROM bundles WHERE id = ?;",
             (bundle_id,),
         ).fetchone()
         if not bundle_row:
@@ -100,6 +107,7 @@ def get_bundle(
             "name": bundle_row["name"],
             "created_at": bundle_row["created_at"],
             "languages": [r["lang_code"] for r in lang_rows],
+            "style_id": bundle_row["style_id"] if "style_id" in bundle_row.keys() else None,
         }
 
 
@@ -109,7 +117,7 @@ def get_bundle_by_name(
 ) -> dict | None:
     with _connection_context(conn) as db:
         bundle_row = db.execute(
-            "SELECT id, name, created_at FROM bundles WHERE name = ?;",
+            "SELECT id, name, created_at, style_id FROM bundles WHERE name = ?;",
             (name,),
         ).fetchone()
         if not bundle_row:
@@ -125,6 +133,7 @@ def get_bundle_by_name(
             "name": bundle_row["name"],
             "created_at": bundle_row["created_at"],
             "languages": [r["lang_code"] for r in lang_rows],
+            "style_id": bundle_row["style_id"] if "style_id" in bundle_row.keys() else None,
         }
 
 
@@ -133,7 +142,7 @@ def list_bundles(
 ) -> list[dict]:
     with _connection_context(conn) as db:
         bundle_rows = db.execute(
-            "SELECT id, name, created_at FROM bundles ORDER BY created_at DESC;",
+            "SELECT id, name, created_at, style_id FROM bundles ORDER BY created_at DESC;",
         ).fetchall()
 
         results = []
@@ -154,6 +163,7 @@ def list_bundles(
                 "created_at": b["created_at"],
                 "languages": [r["lang_code"] for r in lang_rows],
                 "item_count": item_count,
+                "style_id": b["style_id"] if "style_id" in b.keys() else None,
             })
         return results
 
@@ -311,7 +321,7 @@ def list_entries_for_bundle(
 ) -> list[dict]:
     with _connection_context(conn) as db:
         entry_rows = db.execute(
-            "SELECT id, bundle_id, created_at FROM entries WHERE bundle_id = ? ORDER BY created_at ASC, id ASC;",
+            "SELECT id, bundle_id, created_at FROM entries WHERE bundle_id = ? ORDER BY created_at DESC, rowid DESC;",
             (bundle_id,),
         ).fetchall()
 
@@ -357,6 +367,7 @@ def get_bundle_matrix(
         "created_at": bundle["created_at"],
         "languages": bundle["languages"],
         "entries": entries,
+        "style_id": bundle.get("style_id"),
     }
 
 
@@ -386,3 +397,84 @@ def purge_all_data(conn: sqlite3.Connection | None = None) -> dict:
         "deleted_entries": entry_count,
         "deleted_translations": trans_count,
     }
+
+
+def get_existing_phrases_in_bundle(
+    bundle_id: str,
+    lang_code: str,
+    conn: sqlite3.Connection | None = None,
+) -> set[str]:
+    with _connection_context(conn) as db:
+        rows = db.execute(
+            """
+            SELECT LOWER(TRIM(t.text)) AS phrase
+            FROM translations t
+            JOIN entries e ON t.entry_id = e.id
+            WHERE e.bundle_id = ? AND t.lang_code = ?;
+            """,
+            (bundle_id, lang_code),
+        ).fetchall()
+        return {r["phrase"] for r in rows if r["phrase"]}
+
+
+def find_cached_translations(
+    source_phrases: list[str],
+    source_lang: str,
+    target_langs: list[str],
+    conn: sqlite3.Connection | None = None,
+) -> dict[str, dict[str, str]]:
+    cached: dict[str, dict[str, str]] = {}
+    if not source_phrases or not target_langs:
+        return cached
+
+    with _connection_context(conn) as db:
+        for phrase in source_phrases:
+            cleaned = phrase.strip()
+            if not cleaned:
+                continue
+            rows = db.execute(
+                """
+                SELECT t2.lang_code, t2.text
+                FROM translations t1
+                JOIN translations t2 ON t1.entry_id = t2.entry_id
+                WHERE LOWER(TRIM(t1.text)) = LOWER(TRIM(?))
+                  AND t1.lang_code = ?;
+                """,
+                (cleaned, source_lang),
+            ).fetchall()
+            if rows:
+                lang_dict: dict[str, str] = {}
+                for r in rows:
+                    if r["lang_code"] in target_langs:
+                        lang_dict[r["lang_code"]] = r["text"]
+                if lang_dict:
+                    cached[cleaned.lower()] = lang_dict
+    return cached
+
+
+def add_batch_entries_with_translations(
+    bundle_id: str,
+    batch_items: list[dict[str, str]],
+    conn: sqlite3.Connection | None = None,
+) -> list[str]:
+    created_entry_ids: list[str] = []
+    with _connection_context(conn) as db:
+        for trans_map in batch_items:
+            entry_id = str(uuid.uuid4())
+            db.execute(
+                "INSERT INTO entries (id, bundle_id) VALUES (?, ?);",
+                (entry_id, bundle_id),
+            )
+            for lang_code, text in trans_map.items():
+                trans_id = str(uuid.uuid4())
+                db.execute(
+                    """
+                    INSERT INTO translations (id, entry_id, lang_code, text)
+                    VALUES (?, ?, ?, ?)
+                    ON CONFLICT(entry_id, lang_code) DO UPDATE SET text = excluded.text;
+                    """,
+                    (trans_id, entry_id, lang_code, text),
+                )
+            created_entry_ids.append(entry_id)
+    return created_entry_ids
+

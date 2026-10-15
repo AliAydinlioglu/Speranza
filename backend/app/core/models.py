@@ -42,6 +42,11 @@ class TranslateResponse(BaseModel):
 class BundleCreateRequest(BaseModel):
     name: str
     languages: list[str]
+    style_id: str | None = None
+
+
+class BundleLanguagesUpdateRequest(BaseModel):
+    languages: list[str] = Field(default_factory=list)
 
 
 class BundleSummary(BaseModel):
@@ -50,6 +55,7 @@ class BundleSummary(BaseModel):
     created_at: str | None = None
     languages: list[str] = Field(default_factory=list)
     item_count: int = 0
+    style_id: str | None = None
 
 
 class EntryDetail(BaseModel):
@@ -64,6 +70,7 @@ class BundleDetail(BaseModel):
     created_at: str | None = None
     languages: list[str] = Field(default_factory=list)
     entries: list[EntryDetail] = Field(default_factory=list)
+    style_id: str | None = None
 
 
 class EntryCreateRequest(BaseModel):
@@ -78,41 +85,42 @@ class EntryResponse(BaseModel):
     translations: dict[str, str] = Field(default_factory=dict)
 
 
-class GDPRExportEntry(BaseModel):
+class CorpusCandidateItem(BaseModel):
+    text: str
+    frequency: int = 1
+
+
+class CorpusPreviewResponse(BaseModel):
+    source: str
+    total_candidates: int
+    candidates: list[CorpusCandidateItem] = Field(default_factory=list)
+
+
+class CorpusAnalyzeTextRequest(BaseModel):
+    text: str
+    mode: str = "words"
+    top_n: int | str | None = 50
+    filter_stopwords: bool = True
+    min_length: int = 3
+
+
+class BulkGenerateRequest(BaseModel):
+    bundle_name: str | None = None
+    bundle_id: str | None = None
+    languages: list[str]
+    source_lang: str = "en"
+    phrases: list[str]
+    style_id: str | None = None
+
+
+class BulkTaskStatus(BaseModel):
     id: str
-    created_at: str | None = None
-    translations: dict[str, str] = Field(default_factory=dict)
-
-
-class GDPRExportBundle(BaseModel):
-    id: str
-    name: str
-    created_at: str | None = None
-    languages: list[str] = Field(default_factory=list)
-    entries: list[GDPRExportEntry] = Field(default_factory=list)
-
-
-class GDPRExportResponse(BaseModel):
-    export_timestamp: str
-    application: str = "Speranza"
-    schema_version: str = "1.0.0"
-    gdpr_article: str = "Articles 15 & 20 (Right of Access and Right to Data Portability)"
-    total_bundles: int = 0
-    total_entries: int = 0
-    bundles: list[GDPRExportBundle] = Field(default_factory=list)
-
-
-class GDPRPurgeResponse(BaseModel):
+    bundle_id: str | None = None
+    bundle_name: str | None = None
     status: str
-    purged_at: str
-    message: str
-
-
-class GDPRPolicyResponse(BaseModel):
-    application: str
-    compliance: str
-    data_storage: str
-    data_retention: str
-    telemetry: str
-    cookies: str
-    rights: list[str] = Field(default_factory=list)
+    total_items: int = 0
+    processed_items: int = 0
+    progress_percent: int = 0
+    current_phrase: str | None = None
+    skipped_duplicates: int = 0
+    error: str | None = None

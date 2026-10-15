@@ -64,7 +64,7 @@ const AudioEngine = {
     const led = document.getElementById('audio-led');
     if (label) {
       label.textContent = this.muted ? 'SOUND: OFF' : 'SOUND: ON';
-      label.className = `text-xs font-mono-code font-bold tracking-wider ${this.muted ? 'text-[#FF003C]' : 'text-[#4ADE80]'}`;
+      label.className = `text-xs font-mono-code font-bold tracking-wider ${this.muted ? 'text-danger' : 'text-success'}`;
     }
     if (led) {
       led.className = `led-indicator ${this.muted ? 'led-red' : 'led-green'}`;

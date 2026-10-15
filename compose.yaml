@@ -15,6 +15,7 @@ services:
       - translator_models:/home/appuser/.local/share/argos-translate
       - ./backend:/app/backend:ro,z
       - ./frontend:/app/frontend:ro,z
+    command: ["uvicorn", "backend.app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload", "--reload-dir", "/app/backend"]
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:8000/health || exit 1"]

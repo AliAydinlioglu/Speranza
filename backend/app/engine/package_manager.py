@@ -1,8 +1,11 @@
 import asyncio
 import os
 from pathlib import Path
-import argostranslate.package
-import argostranslate.translate
+try:
+    import argostranslate.package
+    import argostranslate.translate
+except ImportError:
+    argostranslate = None
 
 _available_packages_cache: list | None = None
 _install_lock = asyncio.Lock()

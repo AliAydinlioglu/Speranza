@@ -25,20 +25,20 @@ class TestRepository(unittest.TestCase):
 
     def test_create_and_get_bundle(self):
         created = repository.create_bundle(
-            name="Tactical Vocabulary",
+            name="Core Vocabulary",
             language_codes=["en", "es", "de"],
             bundle_id="bundle-1",
             conn=self.conn,
         )
-        self.assertEqual(created["name"], "Tactical Vocabulary")
+        self.assertEqual(created["name"], "Core Vocabulary")
         self.assertEqual(created["languages"], ["en", "es", "de"])
 
         fetched = repository.get_bundle("bundle-1", conn=self.conn)
         self.assertIsNotNone(fetched)
-        self.assertEqual(fetched["name"], "Tactical Vocabulary")
+        self.assertEqual(fetched["name"], "Core Vocabulary")
         self.assertEqual(fetched["languages"], ["en", "es", "de"])
 
-        by_name = repository.get_bundle_by_name("Tactical Vocabulary", conn=self.conn)
+        by_name = repository.get_bundle_by_name("Core Vocabulary", conn=self.conn)
         self.assertIsNotNone(by_name)
         self.assertEqual(by_name["id"], "bundle-1")
 
@@ -85,8 +85,21 @@ class TestRepository(unittest.TestCase):
         self.assertEqual(len(matrix["entries"]), 1)
         self.assertEqual(matrix["entries"][0]["translations"]["es"], "Mantener posición")
 
+        entry2 = repository.add_entry_with_translations(
+            bundle_id="b-comms",
+            translations={"en": "Advance", "es": "Avanzar"},
+            entry_id="e-2",
+            conn=self.conn,
+        )
+        matrix2 = repository.get_bundle_matrix("b-comms", conn=self.conn)
+        self.assertEqual(len(matrix2["entries"]), 2)
+        self.assertEqual(matrix2["entries"][0]["id"], "e-2")
+        self.assertEqual(matrix2["entries"][1]["id"], "e-1")
+
         deleted = repository.delete_entry("e-1", conn=self.conn)
         self.assertTrue(deleted)
+        deleted2 = repository.delete_entry("e-2", conn=self.conn)
+        self.assertTrue(deleted2)
         matrix_after = repository.get_bundle_matrix("b-comms", conn=self.conn)
         self.assertEqual(len(matrix_after["entries"]), 0)
 
@@ -111,6 +124,22 @@ class TestRepository(unittest.TestCase):
 
         bundles_after = repository.list_bundles(conn=self.conn)
         self.assertEqual(len(bundles_after), 0)
+
+    def test_reorder_bundle_languages(self):
+        repository.create_bundle(
+            name="Signals",
+            language_codes=["en", "nl", "de"],
+            bundle_id="b-sig",
+            conn=self.conn,
+        )
+        self.assertEqual(repository.get_bundle_languages("b-sig", conn=self.conn), ["en", "nl", "de"])
+
+        updated = repository.set_bundle_languages("b-sig", ["de", "en", "nl"], conn=self.conn)
+        self.assertEqual(updated, ["de", "en", "nl"])
+        self.assertEqual(repository.get_bundle_languages("b-sig", conn=self.conn), ["de", "en", "nl"])
+
+        bundle = repository.get_bundle("b-sig", conn=self.conn)
+        self.assertEqual(bundle["languages"], ["de", "en", "nl"])
 
 
 if __name__ == "__main__":

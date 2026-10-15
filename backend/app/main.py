@@ -16,7 +16,12 @@ async def lifespan(app: FastAPI):
     yield
 
 
-app = FastAPI(title="Speranza", lifespan=lifespan)
+app = FastAPI(
+    title="Speranza",
+    version="1.0.0",
+    description="Private, offline multi-target neural translation and vocabulary cassette studio.",
+    lifespan=lifespan,
+)
 
 settings.STATIC_DIR.mkdir(parents=True, exist_ok=True)
 settings.TEMPLATES_DIR.mkdir(parents=True, exist_ok=True)

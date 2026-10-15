@@ -52,9 +52,14 @@ const Oscilloscope = {
     const midY = this.height / 2;
     const isCorrupted = this.state === 'corrupted';
 
+    const style = window.getComputedStyle ? getComputedStyle(document.documentElement) : null;
+    const normalColor = style ? style.getPropertyValue('--color-terminal-text').trim() || '#33FF77' : '#33FF77';
+    const alertColor = style ? style.getPropertyValue('--color-danger').trim() || '#EF4444' : '#EF4444';
+    const strokeColor = isCorrupted ? alertColor : normalColor;
+
     this.ctx.save();
-    this.ctx.strokeStyle = isCorrupted ? '#FF003C' : '#33FF77';
-    this.ctx.shadowColor = isCorrupted ? '#FF003C' : '#33FF77';
+    this.ctx.strokeStyle = strokeColor;
+    this.ctx.shadowColor = strokeColor;
     this.ctx.shadowBlur = isCorrupted ? 8 : 6;
     this.ctx.lineWidth = isCorrupted ? 2 : 1.5;
 
